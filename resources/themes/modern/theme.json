@@ -1,0 +1,24 @@
+{
+    "name": "Modern",
+    "slug": "modern",
+    "description": "Sleek, contemporary theme with gradient accents and bold visuals.",
+    "thumbnail": null,
+    "business_type": null,
+    "is_premium": true,
+    "sort_order": 1,
+    "config": {
+        "colors": {
+            "primary": "#8B5CF6",
+            "secondary": "#06B6D4",
+            "background": "#F9FAFB",
+            "text": "#1F2937",
+            "accent": "#F472B6"
+        },
+        "typography": {
+            "heading": "Plus Jakarta Sans",
+            "body": "Inter"
+        },
+        "radius": "0.75rem",
+        "animations": true
+    }
+}

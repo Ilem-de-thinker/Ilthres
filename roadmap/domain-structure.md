@@ -48,13 +48,18 @@ DomainName/
 | `Media` | File upload, storage, optimization, reuse | 1 | Both | Business |
 | `Theme` | Theme selection, customization, rendering | 1 | Both | Business |
 | `Search` | Explore page, filters, search queries | 1 | Both | Business, Product, Service |
-| `Analytics` | Event tracking, reports, charts | 1 | Both | Business |
+| `Analytics` | Event tracking, reports, charts, benchmarks (pixels: post-MVP) | 1, Ext | Both | Business |
 | `Subscription` | Plans, billing, payment processing | 1 | Both | Business, Payments |
 | `Payments` | Payment gateway integration, invoices | 1, 3 | Both | Business |
-| `Marketing` | Marketing links, QR codes, campaigns | 2 | Both | Business, Analytics |
+| `Marketing` | Marketing links, QR codes, promos, lead forms | 2 | Both | Business, Analytics |
 | `Notifications` | In-app, email, push notifications | 2 | Both | Business |
-| `Reviews` | Customer reviews and ratings | 2 | Both | Business |
+| `Reviews` | Customer reviews, ratings, merchant replies | 2 | Both | Business |
+| `WhatsApp` | WhatsApp catalog sync, auto-reply templates | Ext | Both | Business, Product, Service |
+| `Location` | Multi-location branch management | Ext | Both | Business |
+| `Loyalty` | Referral programs, loyalty points | Ext | Both | Business |
 | `Appointment` | Booking system, availability, calendar | 3 | `service_business` only | Business, Service |
+| `Verification` | Business verification, KYC, document upload | 2, Ext | Both | Business |
+| `Testimonial` | Curated customer testimonials on profiles | Ext | Both | Business, Reviews |
 | `Administration` | Admin panel, moderation, system config | 1 | Both | All (read-only) |
 
 ---

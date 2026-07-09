@@ -1,0 +1,24 @@
+{
+    "name": "Default",
+    "slug": "default",
+    "description": "Clean, minimal theme suitable for all business types.",
+    "thumbnail": null,
+    "business_type": null,
+    "is_premium": false,
+    "sort_order": 0,
+    "config": {
+        "colors": {
+            "primary": "#4F46E5",
+            "secondary": "#10B981",
+            "background": "#FFFFFF",
+            "text": "#111827",
+            "accent": "#F59E0B"
+        },
+        "typography": {
+            "heading": "Inter",
+            "body": "Inter"
+        },
+        "radius": "0.75rem",
+        "animations": true
+    }
+}

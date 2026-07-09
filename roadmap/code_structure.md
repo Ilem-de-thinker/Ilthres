@@ -1,6 +1,8 @@
 # Code Structure
 
 > **Code generation principle:** Every file is generated using `php artisan` commands. Files are never created manually or copied.
+>
+> **Implementation pattern:** Features are built one at a time in dependency order. See [progress_pattern.md](./progress_pattern.md).
 
 ---
 
@@ -11,335 +13,475 @@ app/
 ├── Domains/                              # Business domain modules
 │   ├── Authentication/
 │   │   ├── Actions/
-│   │   │   ├── RegisterUser.php
-│   │   │   ├── AuthenticateSession.php
-│   │   │   └── SendPasswordResetLink.php
+│   │   │   ├── RegisterUser.php            ⬜
+│   │   │   ├── AuthenticateSession.php     ⬜
+│   │   │   └── SendPasswordResetLink.php   ⬜
 │   │   ├── DTOs/
-│   │   │   └── UserData.php
+│   │   │   └── UserData.php                ⬜
 │   │   ├── Events/
-│   │   │   ├── UserRegistered.php
-│   │   │   ├── UserLoggedIn.php
-│   │   │   └── UserLoggedOut.php
+│   │   │   ├── UserRegistered.php          ⬜
+│   │   │   ├── UserLoggedIn.php            ⬜
+│   │   │   └── UserLoggedOut.php           ⬜
 │   │   ├── Listeners/
-│   │   │   └── SendWelcomeNotification.php
+│   │   │   └── SendWelcomeNotification.php ⬜
 │   │   ├── Policies/
-│   │   │   └── UserPolicy.php
+│   │   │   └── UserPolicy.php              ⬜
 │   │   ├── Services/
-│   │   │   └── AuthenticationService.php
+│   │   │   └── AuthenticationService.php   ⬜
 │   │   ├── Jobs/
-│   │   │   └── SendWelcomeEmail.php
+│   │   │   └── SendWelcomeEmail.php        ⬜
 │   │   ├── Rules/
-│   │   │   └── StrongPassword.php
+│   │   │   └── StrongPassword.php          ⬜
 │   │   ├── Validation/
-│   │   │   └── LoginRequest.php
+│   │   │   └── LoginRequest.php            ⬜
 │   │   └── Livewire/
-│   │       ├── Login.php
-│   │       ├── Register.php
-│   │       ├── ForgotPassword.php
-│   │       └── ResetPassword.php
+│   │       ├── Login.php                   ✅
+│   │       ├── Register.php                ⬜
+│   │       ├── ForgotPassword.php          ⬜
+│   │       └── ResetPassword.php           ⬜
 │   │
 │   ├── Business/                         # Business profiles domain
 │   │   ├── Actions/
-│   │   │   ├── CreateBusiness.php
-│   │   │   ├── UpdateBusiness.php
-│   │   │   ├── DeleteBusiness.php
-│   │   │   ├── UploadLogo.php
-│   │   │   └── UploadCover.php
+│   │   │   ├── CreateBusiness.php          ⬜
+│   │   │   ├── UpdateBusiness.php          ⬜
+│   │   │   ├── DeleteBusiness.php          ⬜
+│   │   │   ├── UploadLogo.php              ⬜
+│   │   │   └── UploadCover.php             ⬜
 │   │   ├── DTOs/
-│   │   │   └── BusinessData.php
+│   │   │   └── BusinessData.php            ⬜
 │   │   ├── Events/
-│   │   │   ├── BusinessCreated.php
-│   │   │   ├── BusinessUpdated.php
-│   │   │   └── BusinessDeleted.php
+│   │   │   ├── BusinessCreated.php         ⬜
+│   │   │   ├── BusinessUpdated.php         ⬜
+│   │   │   └── BusinessDeleted.php         ⬜
 │   │   ├── Listeners/
-│   │   │   └── InitializeBusinessSettings.php
+│   │   │   └── InitializeBusinessSettings.php ⬜
 │   │   ├── Policies/
-│   │   │   └── BusinessPolicy.php
+│   │   │   └── BusinessPolicy.php          ⬜
 │   │   ├── Jobs/
-│   │   │   └── GenerateBusinessSitemap.php
+│   │   │   └── GenerateBusinessSitemap.php ⬜
 │   │   ├── Livewire/
-│   │   │   ├── CreateBusiness.php        # Includes type selection (product_store or service_business)
-│   │   │   ├── EditBusiness.php
-│   │   │   ├── BusinessSettings.php
-│   │   │   └── PublicProfile.php         # Adapts based on business type
+│   │   │   ├── CreateBusiness.php          ⬜
+│   │   │   ├── EditBusiness.php            ⬜
+│   │   │   ├── BusinessSettings.php        ⬜
+│   │   │   └── PublicProfile.php           ⬜
 │   │   └── Services/
-│   │       └── BusinessService.php
+│   │       └── BusinessService.php         ⬜
 │   │
-│   ├── Product/                          # Product Stores only (type: product_store)
+│   ├── Product/                          # Product Stores only
 │   │   ├── Actions/
-│   │   │   ├── CreateProduct.php
-│   │   │   ├── UpdateProduct.php
-│   │   │   ├── DeleteProduct.php
-│   │   │   └── ToggleStatus.php
+│   │   │   ├── CreateProduct.php           ✅
+│   │   │   ├── UpdateProduct.php           ✅
+│   │   │   ├── DeleteProduct.php           ✅
+│   │   │   └── ToggleStatus.php            ✅
 │   │   ├── DTOs/
-│   │   │   └── ProductData.php
+│   │   │   └── ProductData.php             ✅
 │   │   ├── Events/
-│   │   │   ├── ProductCreated.php
-│   │   │   ├── ProductUpdated.php
-│   │   │   ├── ProductDeleted.php
-│   │   │   └── ProductViewed.php
+│   │   │   ├── ProductCreated.php          ✅
+│   │   │   ├── ProductUpdated.php          ✅
+│   │   │   ├── ProductDeleted.php          ✅
+│   │   │   └── ProductViewed.php           ✅
 │   │   ├── Listeners/
-│   │   │   └── UpdateProductSearchIndex.php
+│   │   │   └── UpdateProductSearchIndex.php ✅
 │   │   ├── Policies/
-│   │   │   └── ProductPolicy.php
+│   │   │   └── ProductPolicy.php           ✅
 │   │   ├── Livewire/
-│   │   │   ├── ProductList.php
-│   │   │   ├── CreateProduct.php
-│   │   │   ├── EditProduct.php
-│   │   │   ├── ProductCard.php
-│   │   │   └── QuickEdit.php
+│   │   │   ├── ProductList.php             ⬜
+│   │   │   ├── CreateProduct.php           ⬜
+│   │   │   ├── EditProduct.php             ⬜
+│   │   │   ├── ProductCard.php             ⬜
+│   │   │   └── QuickEdit.php               ⬜
 │   │   └── Services/
-│   │       └── ProductService.php
+│   │       └── ProductService.php          ⬜
 │   │
-│   ├── Service/                          # Service Businesses only (type: service_business)
+│   ├── Service/                          # Service Businesses only
 │   │   ├── Actions/
-│   │   │   ├── CreateService.php
-│   │   │   ├── UpdateService.php
-│   │   │   ├── DeleteService.php
-│   │   │   └── ToggleStatus.php
+│   │   │   ├── CreateService.php           ⬜
+│   │   │   ├── UpdateService.php           ⬜
+│   │   │   ├── DeleteService.php           ⬜
+│   │   │   └── ToggleStatus.php            ⬜
 │   │   ├── DTOs/
-│   │   │   └── ServiceData.php
+│   │   │   └── ServiceData.php             ⬜
 │   │   ├── Events/
-│   │   │   ├── ServiceCreated.php
-│   │   │   ├── ServiceUpdated.php
-│   │   │   ├── ServiceDeleted.php
-│   │   │   └── ServiceViewed.php
+│   │   │   ├── ServiceCreated.php          ⬜
+│   │   │   ├── ServiceUpdated.php          ⬜
+│   │   │   ├── ServiceDeleted.php          ⬜
+│   │   │   └── ServiceViewed.php           ⬜
 │   │   ├── Listeners/
-│   │   │   └── UpdateServiceSearchIndex.php
+│   │   │   └── UpdateServiceSearchIndex.php ⬜
 │   │   ├── Policies/
-│   │   │   └── ServicePolicy.php
+│   │   │   └── ServicePolicy.php           ⬜
 │   │   ├── Livewire/
-│   │   │   ├── ServiceList.php
-│   │   │   ├── CreateService.php
-│   │   │   ├── EditService.php
-│   │   │   └── ServiceCard.php
+│   │   │   ├── ServiceList.php             ⬜
+│   │   │   ├── CreateService.php           ⬜
+│   │   │   ├── EditService.php             ⬜
+│   │   │   └── ServiceCard.php             ⬜
 │   │   └── Services/
-│   │       └── ServiceService.php
+│   │       └── ServiceService.php          ⬜
 │   │
 │   ├── Media/
 │   │   ├── Actions/
-│   │   │   ├── UploadMedia.php
-│   │   │   ├── DeleteMedia.php
-│   │   │   └── OrganizeMedia.php
+│   │   │   ├── UploadMedia.php             ⬜
+│   │   │   ├── DeleteMedia.php             ⬜
+│   │   │   └── OrganizeMedia.php           ⬜
 │   │   ├── DTOs/
-│   │   │   └── MediaData.php
+│   │   │   └── MediaData.php               ⬜
 │   │   ├── Events/
-│   │   │   ├── MediaUploaded.php
-│   │   │   └── MediaDeleted.php
+│   │   │   ├── MediaUploaded.php           ⬜
+│   │   │   └── MediaDeleted.php            ⬜
 │   │   ├── Policies/
-│   │   │   └── MediaPolicy.php
+│   │   │   └── MediaPolicy.php             ⬜
 │   │   └── Livewire/
-│   │       ├── MediaLibrary.php
-│   │       ├── UploadMedia.php
-│   │       ├── MediaPreview.php
-│   │       └── MediaPicker.php
+│   │       ├── MediaLibrary.php            ⬜
+│   │       ├── UploadMedia.php             ⬜
+│   │       ├── MediaPreview.php            ⬜
+│   │       └── MediaPicker.php             ⬜
 │   │
 │   ├── Theme/
 │   │   ├── Actions/
-│   │   │   ├── ActivateTheme.php
-│   │   │   └── CustomizeTheme.php
+│   │   │   ├── ActivateTheme.php           ⬜
+│   │   │   └── CustomizeTheme.php          ⬜
 │   │   ├── DTOs/
-│   │   │   └── ThemeData.php
+│   │   │   └── ThemeData.php               ⬜
 │   │   ├── Events/
-│   │   │   ├── ThemeActivated.php
-│   │   │   └── ThemeCustomized.php
+│   │   │   ├── ThemeActivated.php          ⬜
+│   │   │   └── ThemeCustomized.php         ⬜
 │   │   ├── Policies/
-│   │   │   └── ThemePolicy.php
+│   │   │   └── ThemePolicy.php             ⬜
 │   │   └── Livewire/
-│   │       ├── ThemeList.php
-│   │       ├── ThemePreview.php
-│   │       ├── ThemeCustomizer.php
-│   │       └── ThemeRenderer.php
+│   │       ├── ThemeList.php               ⬜
+│   │       ├── ThemePreview.php            ⬜
+│   │       ├── ThemeCustomizer.php         ⬜
+│   │       └── ThemeRenderer.php           ⬜
 │   │
 │   ├── Search/
 │   │   ├── Actions/
-│   │   │   ├── SearchBusinesses.php
-│   │   │   └── FilterResults.php
+│   │   │   ├── SearchBusinesses.php        ⬜
+│   │   │   └── FilterResults.php           ⬜
 │   │   └── Livewire/
-│   │       ├── ExploreSearch.php
-│   │       ├── ExploreResults.php
-│   │       ├── FilterSidebar.php
-│   │       ├── FilterDrawer.php
-│   │       └── QuickFilters.php
+│   │       ├── ExploreSearch.php           ⬜
+│   │       ├── ExploreResults.php          ⬜
+│   │       ├── FilterSidebar.php           ⬜
+│   │       ├── FilterDrawer.php            ⬜
+│   │       └── QuickFilters.php            ⬜
 │   │
 │   ├── Analytics/
 │   │   ├── Actions/
-│   │   │   ├── RecordEvent.php
-│   │   │   └── GenerateReport.php
+│   │   │   ├── RecordEvent.php             ⬜
+│   │   │   └── GenerateReport.php          ⬜
 │   │   ├── Events/
-│   │   │   └── BusinessViewed.php
+│   │   │   └── BusinessViewed.php          ⬜
 │   │   ├── Jobs/
-│   │   │   └── ProcessAnalytics.php
+│   │   │   └── ProcessAnalytics.php        ⬜
 │   │   └── Livewire/
-│   │       ├── AnalyticsDashboard.php
-│   │       ├── VisitorsChart.php
-│   │       └── TopItems.php
+│   │       ├── AnalyticsDashboard.php      ⬜
+│   │       ├── VisitorsChart.php           ⬜
+│   │       └── TopItems.php                ⬜
 │   │
 │   ├── Subscription/
 │   │   ├── Actions/
-│   │   │   ├── CreateSubscription.php
-│   │   │   ├── CancelSubscription.php
-│   │   │   ├── UpgradePlan.php
-│   │   │   └── DowngradePlan.php
+│   │   │   ├── CreateSubscription.php      ⬜
+│   │   │   ├── CancelSubscription.php      ⬜
+│   │   │   ├── UpgradePlan.php             ⬜
+│   │   │   └── DowngradePlan.php           ⬜
 │   │   ├── DTOs/
-│   │   │   └── SubscriptionData.php
+│   │   │   └── SubscriptionData.php        ⬜
 │   │   ├── Events/
-│   │   │   ├── SubscriptionStarted.php
-│   │   │   ├── SubscriptionExpired.php
-│   │   │   ├── SubscriptionCancelled.php
-│   │   │   ├── PaymentReceived.php
-│   │   │   └── PaymentFailed.php
+│   │   │   ├── SubscriptionStarted.php     ⬜
+│   │   │   ├── SubscriptionExpired.php     ⬜
+│   │   │   ├── SubscriptionCancelled.php   ⬜
+│   │   │   ├── PaymentReceived.php         ⬜
+│   │   │   └── PaymentFailed.php           ⬜
 │   │   ├── Jobs/
-│   │   │   ├── HandlePaymentWebhook.php
-│   │   │   └── RetryFailedPayment.php
+│   │   │   ├── HandlePaymentWebhook.php    ⬜
+│   │   │   └── RetryFailedPayment.php      ⬜
 │   │   ├── Policies/
-│   │   │   └── SubscriptionPolicy.php
+│   │   │   └── SubscriptionPolicy.php      ⬜
 │   │   └── Livewire/
-│   │       ├── PricingPage.php
-│   │       ├── Checkout.php
-│   │       └── SubscriptionStatus.php
+│   │       ├── PricingPage.php             ⬜
+│   │       ├── Checkout.php                ⬜
+│   │       └── SubscriptionStatus.php      ⬜
 │   │
 │   ├── Payments/
 │   │   ├── Actions/
-│   │   │   ├── CreateInvoice.php
-│   │   │   ├── SendInvoice.php
-│   │   │   └── RecordPayment.php
+│   │   │   ├── CreateInvoice.php           ⬜
+│   │   │   ├── SendInvoice.php             ⬜
+│   │   │   └── RecordPayment.php           ⬜
 │   │   ├── DTOs/
-│   │   │   └── PaymentData.php
+│   │   │   └── PaymentData.php             ⬜
 │   │   ├── Events/
-│   │   │   ├── InvoiceCreated.php
-│   │   │   └── InvoicePaid.php
+│   │   │   ├── InvoiceCreated.php          ⬜
+│   │   │   └── InvoicePaid.php             ⬜
 │   │   └── Livewire/
-│   │       ├── InvoiceList.php
-│   │       ├── CreateInvoice.php
-│   │       └── InvoiceDetail.php
+│   │       ├── InvoiceList.php             ⬜
+│   │       ├── CreateInvoice.php           ⬜
+│   │       └── InvoiceDetail.php           ⬜
 │   │
 │   ├── Marketing/
 │   │   ├── Actions/
-│   │   │   ├── CreateLink.php
-│   │   │   ├── DeleteLink.php
-│   │   │   ├── TrackClick.php
-│   │   │   ├── GenerateQrCode.php
-│   │   │   └── DeleteQrCode.php
+│   │   │   ├── CreateLink.php              ⬜
+│   │   │   ├── DeleteLink.php              ⬜
+│   │   │   ├── TrackClick.php              ⬜
+│   │   │   ├── GenerateQrCode.php          ⬜
+│   │   │   └── DeleteQrCode.php            ⬜
 │   │   ├── DTOs/
-│   │   │   └── MarketingLinkData.php
+│   │   │   └── MarketingLinkData.php       ⬜
 │   │   ├── Events/
-│   │   │   ├── LinkClicked.php
-│   │   │   └── QrCodeGenerated.php
+│   │   │   ├── LinkClicked.php             ⬜
+│   │   │   └── QrCodeGenerated.php         ⬜
 │   │   ├── Jobs/
-│   │   │   └── ProcessLinkClick.php
+│   │   │   └── ProcessLinkClick.php        ⬜
 │   │   └── Livewire/
-│   │       ├── MarketingLinks.php
-│   │       ├── CreateLink.php
-│   │       ├── LinkStats.php
-│   │       ├── QrCodeGenerator.php
-│   │       └── QrCodeList.php
+│   │       ├── MarketingLinks.php          ⬜
+│   │       ├── CreateLink.php              ⬜
+│   │       ├── LinkStats.php               ⬜
+│   │       ├── QrCodeGenerator.php         ⬜
+│   │       └── QrCodeList.php              ⬜
 │   │
 │   └── Notifications/
 │       ├── Actions/
-│       │   ├── MarkAsRead.php
-│       │   └── UpdatePreferences.php
+│       │   ├── MarkAsRead.php              ⬜
+│       │   └── UpdatePreferences.php       ⬜
 │       ├── Livewire/
-│       │   ├── NotificationBell.php
-│       │   ├── NotificationList.php
-│       │   └── NotificationPreferences.php
-│       └── Notification Classes
-│           ├── ReviewReceived.php
-│           ├── SubscriptionExpiring.php
-│           └── VerificationApproved.php
+│       │   ├── NotificationBell.php        ⬜
+│       │   ├── NotificationList.php        ⬜
+│       │   └── NotificationPreferences.php ⬜
+│       └── Notifications/
+│           ├── ReviewReceived.php          ⬜
+│           ├── SubscriptionExpiring.php    ⬜
+│           └── VerificationApproved.php    ⬜
 │
 ├── Http/
 │   ├── Controllers/
+│   │   ├── Controller.php                  ✅
 │   │   └── Api/
-│   │       ├── BusinessController.php
-│   │       ├── ProductController.php
-│   │       ├── ServiceController.php
-│   │       ├── SearchController.php
-│   │       └── AnalyticsController.php
+│   │       ├── BusinessController.php      ⬜
+│   │       ├── ProductController.php       ⬜
+│   │       ├── ServiceController.php       ⬜
+│   │       ├── SearchController.php        ⬜
+│   │       └── AnalyticsController.php     ⬜
 │   ├── Middleware/
-│   │   ├── TenantScope.php
-│   │   ├── SubscriptionMiddleware.php
-│   │   └── BusinessOwnership.php
-│   └── Requests/
-│       └── ...
+│   │   ├── TenantScope.php                 ⬜
+│   │   ├── SubscriptionMiddleware.php      ⬜
+│   │   └── BusinessOwnership.php           ⬜
+│   └── Requests/                           ⬜
 │
 ├── Models/
-│   ├── User.php
-│   ├── Business.php                      # Has type enum: product_store | service_business
-│   ├── Product.php                       # Only for product_store businesses
-│   ├── Service.php                       # Only for service_business businesses
-│   ├── Category.php
-│   ├── Media.php
-│   ├── Theme.php
-│   ├── Subscription.php
-│   ├── Plan.php
-│   ├── AnalyticsEvent.php
-│   ├── Review.php                        # Phase 2
-│   ├── SavedBusiness.php                 # Phase 2
-│   ├── MarketingLink.php                 # Phase 2
-│   ├── QrCode.php                        # Phase 2
-│   ├── Appointment.php                   # Phase 3 (service businesses only)
-│   ├── Lead.php                          # Phase 3
-│   ├── TeamMember.php                    # Phase 3
-│   ├── CustomDomain.php                  # Phase 3
-│   ├── Invoice.php                       # Phase 3
-│   └── Integration.php                   # Phase 4
+│   ├── User.php                            ✅
+│   ├── Business.php                        ✅
+│   ├── Product.php                         ✅
+│   ├── Service.php                         ✅
+│   ├── Category.php                        ✅
+│   ├── Media.php                           ✅
+│   ├── Theme.php                           ✅
+│   ├── Subscription.php                    ✅
+│   ├── Plan.php                            ✅
+│   ├── AnalyticsEvent.php                  ⬜
+│   ├── Review.php                          ⬜ Phase 2
+│   ├── ReviewReply.php                     ⬜ Ext
+│   ├── SavedBusiness.php                   ⬜ Phase 2
+│   ├── MarketingLink.php                   ⬜ Phase 2
+│   ├── QrCode.php                          ⬜ Phase 2
+│   ├── QrCodeScan.php                      ⬜ Ext
+│   ├── Discount.php                        ⬜ Ext
+│   ├── DiscountRedemption.php              ⬜ Ext
+│   ├── PromoBanner.php                     ⬜ Ext
+│   ├── LeadForm.php                        ⬜ Ext
+│   ├── LeadFormField.php                   ⬜ Ext
+│   ├── LeadSubmission.php                  ⬜ Ext
+│   ├── LoyaltyProgram.php                  ⬜ Ext
+│   ├── LoyaltyPointsTransaction.php        ⬜ Ext
+│   ├── Referral.php                        ⬜ Ext
+│   ├── Appointment.php                     ⬜ Phase 3
+│   ├── AvailabilitySlot.php                ⬜ Phase 3
+│   ├── BookingSchedule.php                 ⬜ Phase 3
+│   ├── BookingBlock.php                    ⬜ Ext
+│   ├── WhatsAppSetting.php                 ⬜ Ext
+│   ├── WhatsAppTemplate.php                ⬜ Ext
+│   ├── WhatsAppCatalogItem.php             ⬜ Ext
+│   ├── Location.php                        ⬜ Ext
+│   ├── Lead.php                            ⬜ Phase 3
+│   ├── TeamMember.php                      ⬜ Phase 3
+│   ├── CustomDomain.php                    ⬜ Phase 3
+│   ├── Invoice.php                         ⬜ Phase 3
+│   ├── Verification.php                    ⬜ Phase 2
+│   ├── VerificationDocument.php            ⬜ Ext
+│   ├── Testimonial.php                     ⬜ Ext
+│   ├── SavedReport.php                     ⬜ Ext
+│   ├── ScheduledReport.php                 ⬜ Ext
+│   ├── TrackingPixel.php                   ⬜ Ext
+│   └── Integration.php                     ⬜ Phase 4
 │
 └── Providers/
-    ├── AppServiceProvider.php
-    └── EventServiceProvider.php
+    ├── AppServiceProvider.php              ✅
+    └── EventServiceProvider.php            ⬜
 
 resources/
 ├── views/
 │   ├── layouts/
-│   │   ├── app.blade.php
-│   │   ├── dashboard.blade.php
-│   │   └── admin.blade.php
-│   ├── components/
-│   │   ├── header.blade.php
-│   │   ├── footer.blade.php
-│   │   └── navigation.blade.php
-│   └── livewire/
-│       └── ...
+│   │   ├── app.blade.php                   ✅
+│   │   ├── dashboard.blade.php             ✅
+│   │   └── admin.blade.php                 ⬜
+│   ├── components/                         ⬜
+│   ├── livewire/                           ⬜
+│   └── pages/                              ⬜
 
 routes/
-├── web.php
-├── api.php                               # Phase 4
-└── admin.php
+├── web.php                                 ✅ (basic)
+├── api.php                                 ⬜ Phase 4
+└── admin.php                               ⬜
 
 config/
-├── livewire.php
-├── theme.php
-├── subscription.php
-├── analytics.php
-├── search.php
-├── media.php
-└── features.php
+├── livewire.php                            ⬜
+├── theme.php                               ⬜
+├── subscription.php                        ⬜
+├── analytics.php                           ⬜
+├── search.php                              ⬜
+├── media.php                               ⬜
+└── features.php                            ⬜
 
 database/
 ├── migrations/
+│   ├── 0001_01_01_000000_create_users_table.php          ✅
+│   ├── 0001_01_01_000001_create_cache_table.php           ✅
+│   ├── 0001_01_01_000002_create_jobs_table.php            ✅
+│   ├── 2026_07_04_194149_create_businesses_table.php      ✅
+│   ├── 2026_07_04_194150_create_categories_table.php      ✅
+│   ├── 2026_07_04_194150_create_products_table.php        ✅
+│   ├── 2026_07_04_194151_create_media_table.php           ✅
+│   ├── 2026_07_04_194151_create_services_table.php        ✅
+│   ├── 2026_07_04_194151_create_plans_table.php           ✅
+│   ├── 2026_07_04_194151_create_subscriptions_table.php   ✅
+│   ├── 2026_07_04_194151_create_themes_table.php          ✅
+│   └── (business_theme pivot included in themes migration) ✅
 └── seeders/
-    ├── PlanSeeder.php
-    ├── ThemeSeeder.php
-    └── CategorySeeder.php
+    ├── DatabaseSeeder.php                  ✅
+    ├── PlanSeeder.php                      ✅
+    ├── CategorySeeder.php                  ✅
+    └── ThemeSeeder.php                     ✅
 
 tests/
-├── Feature/
-│   ├── Authentication/
-│   ├── Business/
-│   ├── Product/
-│   ├── Service/
-│   ├── Theme/
-│   ├── Search/
-│   ├── Analytics/
-│   ├── Subscription/
-│   ├── Media/
-│   └── Marketing/
-├── Unit/
-│   ├── Actions/
-│   ├── Services/
-│   └── DTOs/
-└── Pest.php
+├── Feature/                                ⬜
+│   ├── Authentication/                     ⬜
+│   ├── Business/                           ⬜
+│   ├── Product/                            ⬜
+│   ├── Service/                            ⬜
+│   ├── Theme/                              ⬜
+│   ├── Search/                             ⬜
+│   ├── Analytics/                          ⬜
+│   ├── Subscription/                       ⬜
+│   ├── Media/                              ⬜
+│   └── Marketing/                          ⬜
+├── Unit/                                   ⬜
+│   ├── Actions/                            ⬜
+│   ├── Services/                           ⬜
+│   └── DTOs/                               ⬜
+└── Pest.php                                ✅
+```
+
+---
+
+## Legend
+
+| Symbol | Meaning |
+|--------|---------|
+| ✅ | File exists and is implemented |
+| ⬜ | Planned — not yet implemented |
+| ⬜ Phase N | Planned for a later phase |
+
+---
+
+## Implementation Order
+
+Features are built in dependency order, one at a time:
+
+| # | Feature | Depends On | Status |
+|---|---------|------------|--------|
+| 1 | Authentication | — | ✅ Completed |
+| 2 | Landing Page | — | ✅ Completed |
+| 3 | Business Profiles | Authentication | ⬜ **Next** |
+| 4 | Products | Business, Media | ✅ Partial (domain) |
+| 5 | Services | Business, Media | ⬜ |
+| 6 | Media Library | Business | ⬜ |
+| 7 | Themes | Business | ⬜ |
+| 8 | Explore & Search | Business, Product, Service | ⬜ |
+| 9 | Analytics | Business | ⬜ |
+| 10 | Subscriptions | Business, Payments | ⬜ |
+| 11 | Payments | Business | ⬜ |
+| 12 | Marketing | Business | ⬜ |
+| 13 | Notifications | Authentication | ⬜ |
+| 14 | Reviews & Ratings | Business | ⬜ Phase 2 |
+| 15 | WhatsApp Catalog | Business, Product, Service | ⬜ Ext |
+| 16 | Multi-Location | Business | ⬜ Ext |
+| 17 | Discounts & Promos | Business, Marketing | ⬜ Ext |
+| 18 | Lead Forms | Business | ⬜ Ext |
+| 19 | Referral & Loyalty | Business | ⬜ Ext |
+| 20 | Bulk CSV Import | Product | ⬜ Ext |
+| 21 | Per-Item Analytics | Analytics | ⬜ Ext |
+| 22 | Benchmarking | Analytics, Search | ⬜ Ext |
+| 23 | Tracking Pixels (Post-MVP) | Analytics | ⬜ Future |
+| 24 | Business Verification | Business, Admin | ⬜ Phase 2 |
+| 25 | Testimonials | Business, Reviews | ⬜ Ext |
+
+See [progress_pattern.md](./progress_pattern.md) for detailed tracking.
+
+---
+
+## Compulsory Conventions
+
+### Docblocks Are Mandatory
+
+Every class file **must** have a docblock that explains what it does and why. No exceptions.
+
+| Element | What to document |
+|---------|-----------------|
+| **Class** | What this class does, when it fires / is used, what it returns |
+| **Public methods** | What the method does, parameters, return value (if not obvious from signature) |
+| **Properties** | What the property stores, especially nullable or complex types |
+| **Constructor params** | Each constructor param gets an inline docblock if it's a DTO or configuration |
+
+```php
+/**
+ * Registers a new user account.
+ *
+ * Creates the User model from the provided DTO, fires UserRegistered
+ * so that downstream listeners (welcome email, default setup) can react,
+ * and returns the fresh user instance.
+ */
+class RegisterUser
+{
+    public function __invoke(UserData $data): User
+    {
+        // ...
+    }
+}
+```
+
+### Inline Comments Are Mandatory
+
+Use inline `//` comments to explain:
+- **Why** something is done a certain way (not what — the code shows what)
+- **Non-obvious** business rules or edge cases
+- **TODOs** for future improvements or phase-gated features
+- **Sections** in long views or methods
+
+```php
+// Business type is set at creation and cannot be changed.
+// This determines whether the merchant dashboard shows Products or Services.
+if ($business->isProductStore()) {
+    // ...
+}
+```
+
+```blade
+{{-- Hero section — main CTA for new visitors. --}}
+```
+
+### View Files Get Header Comments
+
+Every Blade view file **must** start with a `{{-- ... --}}` comment describing the view's purpose and what Livewire component it wraps (if any).
+
+```blade
+{{-- Login page — wraps the Auth\Login Livewire component. --}}
 ```
 
 ---
@@ -422,6 +564,63 @@ class TenantScope implements Scope
 }
 ```
 
+### Separate Dashboards by Business Type
+
+Product stores and service businesses have **completely isolated dashboards**.
+The dashboard view (`resources/views/pages/dashboard.blade.php`) checks `$business->type`
+and renders entirely different content sections — no shared functionality.
+
+```
+Product Store Dashboard:       Service Business Dashboard:
+┌─────────────────────────┐   ┌───────────────────────────┐
+│ Products count           │   │ Services count            │
+│ Product inventory        │   │ Service portfolio         │
+│ Orders / sales           │   │ Appointment bookings      │
+│ Product categories       │   │ Service categories        │
+│ Discount management      │   │ Availability settings     │
+└─────────────────────────┘   └───────────────────────────┘
+```
+
+The sidebar navigation also adapts — a product store never sees "Services" in the nav,
+and a service business never sees "Products". This isolation extends to all future
+domains (appointments only for service, inventory only for stores).
+
+### Business Switcher (Multi-Business)
+
+Users with more than one business see a **dropdown switcher** at the top of the
+dashboard sidebar. The active business is stored in `session('current_business_id')`.
+
+All dashboard operations are scoped to the session's current business.
+Switching businesses changes the entire dashboard context (nav items, stats, content).
+
+```php
+// In dashboard layout — sets the active business context.
+session(['current_business_id' => $business->id]);
+```
+
+### File Uploads Over URLs
+
+File uploads always use **direct file input** (`<input type="file">`) via Livewire's
+`WithFileUploads` trait. URL-based logo/banner fields do not exist.
+
+```php
+use Livewire\WithFileUploads;
+
+class OnboardingWizard extends Component
+{
+    use WithFileUploads;
+
+    public $logo; // Livewire\TemporaryUploadedFile instance
+
+    public function complete(): void
+    {
+        $path = $this->logo->store('logos', 'public');
+    }
+}
+```
+
+Accepted formats: JPEG, PNG, WebP. Max file size: 2MB per upload.
+
 ---
 
 ## Artisan Command Reference
@@ -448,20 +647,22 @@ class TenantScope implements Scope
 ## Bootstrapping Order
 
 ```
-1. composer create-project laravel/laravel .
-2. composer require livewire/livewire
-3. php artisan make:middleware TenantScope
-4. php artisan make:provider DomainServiceProvider
-5. php artisan make:seeder PlanSeeder
-6. php artisan make:seeder ThemeSeeder
-7. php artisan make:seeder CategorySeeder
-8. php artisan migrate --seed
-9. php artisan make:livewire Auth\Login
-10. php artisan make:livewire Auth\Register
-11. php artisan make:model Business -m
-12. php artisan make:action Business\CreateBusiness
-13. php artisan make:event Business\BusinessCreated
-14. php artisan make:listener Business\InitializeBusinessSettings --event=Business\BusinessCreated
-15. php artisan make:policy Business\BusinessPolicy --model=Business
-...
+ 1. composer create-project laravel/laravel .       ✅
+ 2. composer require livewire/livewire                ✅
+ 3. php artisan make:model User -m                    ✅
+ 4. php artisan make:model Business -m                 ✅
+ 5. php artisan make:model Product -m                  ✅
+ 6. php artisan make:model Service -m                  ✅
+ 7. php artisan make:model Category -m                 ✅
+ 8. php artisan make:model Media -m                    ✅
+ 9. php artisan make:model Theme -m                    ✅
+10. php artisan make:model Subscription -m             ✅
+11. php artisan make:model Plan -m                     ✅
+12. php artisan make:seeder PlanSeeder                 ✅
+13. php artisan make:seeder ThemeSeeder                ✅
+14. php artisan make:seeder CategorySeeder             ✅
+15. php artisan migrate --seed                         ✅
+16. php artisan make:livewire Auth\Login               ✅
+17. php artisan make:action Product\CreateProduct       ✅
+18. ...
 ```

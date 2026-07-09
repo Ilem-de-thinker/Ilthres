@@ -10,6 +10,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.3",
+        "hopekelldev/laravel-paystack": "^1.0",
         "laravel/framework": "^13.17",
         "laravel/tinker": "^3.0",
         "livewire/blaze": "^1.0",
@@ -18,6 +19,7 @@
     "require-dev": {
         "fakerphp/faker": "^1.24",
         "larastan/larastan": "^3.9",
+        "laravel/boost": "*",
         "laravel/pail": "^1.2.5",
         "laravel/pao": "^1.0.6",
         "laravel/pint": "^1.27",

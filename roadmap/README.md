@@ -8,12 +8,21 @@
 
 ## Roadmap Structure
 
-| Phase | Focus | Status |
-|-------|-------|--------|
+| Phase / Feature Set | Focus | Status |
+|---------------------|-------|--------|
 | [Phase 1 — MVP](./phase-1-mvp.md) | Core business profiles, products, services, themes, explore, search, analytics, subscriptions | Pending |
 | [Phase 2 — Engagement](./phase-2-engagement.md) | Reviews, saved businesses, premium themes, marketing links, QR codes, notifications | Pending |
 | [Phase 3 — Advanced](./phase-3-advanced.md) | Appointments, lead management, teams, custom domains, invoices, advanced reports | Pending |
 | [Phase 4 — Ecosystem](./phase-4-ecosystem.md) | AI assistant, AI SEO, recommendations, public API, mobile apps, partner integrations | Pending |
+
+### Extended Feature Sets
+
+| Document | Description |
+|----------|-------------|
+| [Business Features](./business-features.md) | Booking widget, reviews & ratings, QR codes, WhatsApp catalog/auto-reply, multi-location support |
+| [Growth & Marketing](./growth-marketing.md) | Discount codes, lead capture forms, referral/loyalty, bulk CSV import |
+| [Analytics & Insights](./analytics-insights.md) | Per-product/service analytics, exportable reports, competitor benchmarking, Pixel (post-MVP) |
+| [Trust & Credibility](./trust-credibility.md) | Verified business badge (KYC), testimonials showcase section |
 
 ---
 
