@@ -77,6 +77,26 @@
             </div>
         </div>
 
+        {{-- Link to Hero Banners --}}
+        @if ($heroBanners->count())
+            <div class="rounded-lg border border-gray-200 bg-white p-6">
+                <h2 class="text-sm font-semibold text-gray-900">Link to Hero Banners</h2>
+                <p class="text-xs text-gray-400 mt-0.5 mb-3">Choose which hero banners feature this product.</p>
+                <div class="space-y-1">
+                    @foreach ($heroBanners as $banner)
+                        <label class="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" value="{{ $banner->id }}" wire:model.live="selectedBanners"
+                                class="rounded border-gray-300 text-gray-900 focus:ring-gray-900">
+                            @if ($banner->image)
+                                <img src="{{ Storage::url($banner->image) }}" class="h-8 w-12 rounded object-cover">
+                            @endif
+                            <span class="text-sm text-gray-700">{{ $banner->message }}</span>
+                        </label>
+                    @endforeach
+                </div>
+            </div>
+        @endif
+
         <div class="flex items-center gap-6 px-1">
             <label class="flex items-center gap-2"><input wire:model="isActive" type="checkbox" class="rounded border-gray-300 text-gray-900 focus:ring-gray-900"><span class="text-sm text-gray-700">Active</span></label>
             <label class="flex items-center gap-2"><input wire:model="isFeatured" type="checkbox" class="rounded border-gray-300 text-gray-900 focus:ring-gray-900"><span class="text-sm text-gray-700">Featured</span></label>

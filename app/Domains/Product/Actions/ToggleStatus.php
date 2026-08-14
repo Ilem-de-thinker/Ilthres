@@ -14,7 +14,7 @@ class ToggleStatus
 {
     public function __invoke(Product $product): Product
     {
-        $product->update(['is_active' => !$product->is_active]);
+        $product->update(['is_active' => ! $product->is_active]);
 
         return $product;
     }

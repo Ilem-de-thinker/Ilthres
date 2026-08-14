@@ -9,10 +9,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class AnalyticsEvent extends Model
 {
     use HasFactory;
+
     const TYPE_PAGE_VIEW = 'page_view';
+
     const TYPE_PRODUCT_VIEW = 'product_view';
+
     const TYPE_SERVICE_VIEW = 'service_view';
+
     const TYPE_WHATSAPP_CLICK = 'whatsapp_click';
+
     const TYPE_PHONE_CLICK = 'phone_click';
 
     public $timestamps = false;

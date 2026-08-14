@@ -1,0 +1,24 @@
+{
+    "name": "Heritage",
+    "slug": "heritage",
+    "description": "Heritage Luxury — authoritative sophistication with Playfair Display serif, champagne gold accents, and fine hairline borders. High-end fashion editorial aesthetic.",
+    "thumbnail": null,
+    "business_type": "luxury",
+    "is_premium": true,
+    "sort_order": 3,
+    "config": {
+        "colors": {
+            "primary": "#000000",
+            "secondary": "#735c00",
+            "background": "#fbf9f9",
+            "text": "#000000",
+            "accent": "#fed65b"
+        },
+        "typography": {
+            "heading": "Playfair Display",
+            "body": "Hanken Grotesk"
+        },
+        "radius": "0.125rem",
+        "animations": true
+    }
+}

@@ -1,96 +1,132 @@
-{{--
-  Default theme · Service detail — single service details with pricing, duration, and CTAs.
---}}
+{{-- Default theme · Service detail — Serene Ivory --}}
 @section('title', $service->name . ' — ' . $business->name)
 
-@push('styles')
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-    :root {
-        --color-primary: {{ $colors['primary'] ?? '#111827' }};
-        --color-secondary: {{ $colors['secondary'] ?? '#4B5563' }};
-        --color-background: {{ $colors['background'] ?? '#FFFFFF' }};
-        --color-text: {{ $colors['text'] ?? '#111827' }};
-        --color-accent: {{ $colors['accent'] ?? '#9CA3AF' }};
-        --font-heading: 'Inter', sans-serif;
-        --font-body: 'Inter', sans-serif;
-        --radius: {{ $radius ?? '0.375rem' }};
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: var(--font-body); background: var(--color-background); color: var(--color-text); line-height: 1.6; -webkit-font-smoothing: antialiased; }
-    a { color: var(--color-text); text-decoration: none; transition: opacity 0.15s ease; }
-    a:hover { opacity: 0.8; }
-    .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
-    
-    .btn {
-        display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
-        padding: 0.75rem 1.5rem; border-radius: var(--radius);
-        font-weight: 500; font-size: 0.875rem; border: 1px solid transparent; cursor: pointer;
-        transition: all 0.2s ease; text-decoration: none;
-    }
-    .btn-primary { background: var(--color-primary); color: var(--color-background); }
-    .btn-primary:hover { opacity: 0.9; }
-    .btn-outline { background: transparent; border: 1px solid var(--color-primary); color: var(--color-primary); }
-    .btn-outline:hover { background: color-mix(in srgb, var(--color-primary) 4%, transparent); }
+    body { background: #fcf9f2; color: #1c1c18; font-family: 'Plus Jakarta Sans', sans-serif; }
+    h1, h2, h3, h4 { font-family: 'Playfair Display', serif; line-height: 1.15; }
+    ::selection { background: #6c5e06; color: #fff; }
+    :root { --c-primary: {{ $colors['primary'] ?? '#1c1c18' }}; --c-secondary: {{ $colors['secondary'] ?? '#5e5f5c' }}; --c-bg: {{ $colors['background'] ?? '#fcf9f2' }}; --c-text: {{ $colors['text'] ?? '#1c1c18' }}; --c-accent: {{ $colors['accent'] ?? '#6c5e06' }}; }
+    .thin-frame { padding: 16px; border: 0.5px solid #E5E0D5; }
+    .subtle-shadow { box-shadow: 0px 10px 40px rgba(0,0,0,0.03); }
+    .section-label { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #f1eee7; }
+    ::-webkit-scrollbar-thumb { background: #c5c7c1; border-radius: 3px; }
 </style>
-@endpush
 
-<div>
+<div class="min-h-screen flex flex-col">
     @include('themes::default.service.header')
 
-    <section style="padding: 3rem 0; border-bottom: 1px solid color-mix(in srgb, var(--color-text) 8%, transparent);">
-        <div class="container" style="max-width: 800px;">
-            <div style="margin-bottom: 2rem;">
-                <a href="{{ route('business.profile', $business) }}" style="display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; font-weight: 500; color: color-mix(in srgb, var(--color-text) 60%, transparent);">
-                    &larr; Back to Services
+    <main class="flex-1" style="padding-top: 112px; padding-bottom: 96px;">
+        <div style="max-width: 1280px; margin: 0 auto; padding: 0 64px;">
+            {{-- Breadcrumb --}}
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 48px;">
+                <a href="{{ route('business.site', $business) }}#services" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #6c5e06; text-decoration: none;" onmouseover="this.style.color='#1c1c18'" onmouseout="this.style.color='#6c5e06'">
+                    <span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">arrow_back</span> BACK TO SERVICES
                 </a>
             </div>
-            
-            <span style="font-size: 0.8125rem; font-weight: 600; text-transform: uppercase; color: var(--color-primary); letter-spacing: 0.05em; display: block; margin-bottom: 0.5rem;">
-                {{ $service->category?->name ?? 'General' }}
-            </span>
-            
-            <h1 style="font-size: 2.25rem; font-weight: 600; margin-bottom: 1.5rem; line-height: 1.2;">{{ $service->name }}</h1>
 
-            @if ($service->description)
-                <p style="font-size: 1.0625rem; line-height: 1.7; color: color-mix(in srgb, var(--color-text) 70%, transparent); margin-bottom: 2.5rem;">
-                    {{ $service->description }}
-                </p>
-            @endif
+            {{-- Service Grid: 12-col --}}
+            <div style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 32px;">
+                {{-- Left: Service Info (7 cols) --}}
+                <div style="grid-column: 1 / 8; display: flex; flex-direction: column; gap: 24px;">
+                    <div>
+                        <span class="section-label" style="color: #6c5e06; margin-bottom: 12px; display: inline-block;">SERVICE</span>
+                        <h1 style="font-family: 'Playfair Display', serif; font-style: italic; font-size: clamp(2rem, 4vw, 3rem); color: #1c1c18; margin-bottom: 16px;">
+                            {{ $service->name }}
+                        </h1>
+                        @if($service->description)
+                        <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.9375rem; line-height: 1.8; color: #454843;">
+                            {!! $service->description !!}
+                        </div>
+                        @endif
+                    </div>
 
-            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-bottom: 3rem;">
-                @if ($service->price)
-                    <div style="padding: 1.25rem; border: 1px solid color-mix(in srgb, var(--color-text) 8%, transparent); border-radius: var(--radius);">
-                        <p style="font-size: 0.75rem; color: color-mix(in srgb, var(--color-text) 50%, transparent); margin-bottom: 0.25rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Price</p>
-                        <p style="font-size: 1.375rem; font-weight: 600; color: var(--color-text);">{{ number_format($service->price, 2) }}</p>
+                    {{-- Price Display --}}
+                    @if($service->price)
+                    <div class="thin-frame" style="border-radius: 0.5rem;">
+                        <span class="section-label" style="color: #757873; display: block; margin-bottom: 8px;">FROM</span>
+                        <span style="font-family: 'Playfair Display', serif; font-size: 2rem; color: #1c1c18; display: block; margin-bottom: 16px;">{{ \App\Support\Money\Money::format($service->price, $business->currency_code) }}</span>
+                        @if ($business->order_mode === 'checkout')
+                            <form method="POST" action="{{ route('order.cart.add', ['business' => $business->slug, 'type' => 'service', 'id' => $service->id]) }}">
+                                @csrf
+                                <button type="submit"
+                                    style="display: inline-flex; align-items: center; gap: 8px; padding: 16px 40px; background: #1c1c18; color: #fcf9f2; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; border: 0.5px solid #1c1c18; border-radius: 0.25rem; transition: all 0.2s; text-decoration: none; cursor: pointer;"
+                                    onmouseover="this.style.background='#454843'; this.style.borderColor='#454843';"
+                                    onmouseout="this.style.background='#1c1c18'; this.style.borderColor='#1c1c18';">
+                                    <span class="material-symbols-outlined" style="font-size: 16px;">shopping_cart</span> ADD TO CART
+                                </button>
+                            </form>
+                        @elseif($business->whatsapp)
+                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $business->whatsapp) }}?text=Hi! I'd like to book "{{ $service->name }}" at {{ \App\Support\Money\Money::format($service->price, $business->currency_code) }}. Is this available?"
+                           target="_blank" rel="noopener"
+                           style="display: inline-flex; align-items: center; gap: 8px; padding: 16px 40px; background: #1c1c18; color: #fcf9f2; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; border: 0.5px solid #1c1c18; border-radius: 0.25rem; transition: all 0.2s; text-decoration: none;"
+                           onmouseover="this.style.background='#454843'; this.style.borderColor='#454843';"
+                           onmouseout="this.style.background='#1c1c18'; this.style.borderColor='#1c1c18';">
+                            <span class="material-symbols-outlined" style="font-size: 16px;">chat</span> INQUIRE
+                        </a>
+                        @endif
                     </div>
-                @endif
-                @if ($service->duration_minutes)
-                    <div style="padding: 1.25rem; border: 1px solid color-mix(in srgb, var(--color-text) 8%, transparent); border-radius: var(--radius);">
-                        <p style="font-size: 0.75rem; color: color-mix(in srgb, var(--color-text) 50%, transparent); margin-bottom: 0.25rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Duration</p>
-                        <p style="font-size: 1.375rem; font-weight: 600; color: var(--color-text);">{{ $service->duration_minutes }} minutes</p>
+                    @endif
+
+                    {{-- Book Now Button --}}
+                    @if($service->hasAvailability ?? false)
+                    <div class="thin-frame" style="border-radius: 0.5rem;">
+                        <span class="section-label" style="color: #757873; display: block; margin-bottom: 8px;">BOOK THIS SERVICE</span>
+                        <p style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.875rem; color: #454843; margin-bottom: 16px;">Select a date and time that works for you.</p>
+                        <livewire:booking.book-appointment :business="$business" :service="$service" :key="'booking-'.$service->id" />
                     </div>
-                @endif
+                    @endif
+
+                    {{-- CTA Buttons --}}
+                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                        @if($business->whatsapp)
+                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $business->whatsapp) }}?text=Hi! I'd like to book "{{ $service->name }}" at {{ \App\Support\Money\Money::format($service->price, $business->currency_code) }}. Is this available?"
+                           target="_blank" rel="noopener"
+                           style="display: inline-flex; align-items: center; gap: 8px; padding: 16px 40px; background: {{ $business->order_mode === 'checkout' ? 'transparent' : '#1c1c18' }}; color: {{ $business->order_mode === 'checkout' ? '#1c1c18' : '#fcf9f2' }}; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; border: 0.5px solid {{ $business->order_mode === 'checkout' ? '#5e5f5c' : '#1c1c18' }}; border-radius: 0.25rem; transition: all 0.2s; text-decoration: none;"
+                           onmouseover="this.style.background='#1c1c18'; this.style.color='#fcf9f2'; this.style.borderColor='#1c1c18';"
+                           onmouseout="this.style.background='{{ $business->order_mode === 'checkout' ? 'transparent' : '#1c1c18' }}'; this.style.color='{{ $business->order_mode === 'checkout' ? '#1c1c18' : '#fcf9f2' }}'; this.style.borderColor='{{ $business->order_mode === 'checkout' ? '#5e5f5c' : '#1c1c18' }}';">
+                            <span class="material-symbols-outlined" style="font-size: 16px;">chat</span> WHATSAPP
+                        </a>
+                        <a href="tel:{{ $business->phone }}"
+                           style="display: inline-flex; align-items: center; gap: 8px; padding: 16px 40px; border: 0.5px solid #5e5f5c; color: #1c1c18; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; transition: all 0.2s; text-decoration: none; border-radius: 0.25rem;"
+                           onmouseover="this.style.background='#1c1c18'; this.style.color='#fcf9f2'; this.style.borderColor='#1c1c18';"
+                           onmouseout="this.style.background='transparent'; this.style.color='#1c1c18'; this.style.borderColor='#5e5f5c';">
+                            <span class="material-symbols-outlined" style="font-size: 16px;">call</span> CALL NOW
+                        </a>
+                        @endif
+                    </div>
+                </div>
+
+                {{-- Right: Service Image (5 cols) --}}
+                <div style="grid-column: 8 / 13;">
+                    @if($service->image)
+                    <div class="thin-frame" style="border-radius: 0.5rem; overflow: hidden;">
+                        <img src="{{ Storage::url($service->image) }}" alt="{{ $service->name }}" style="width: 100%; aspect-ratio: 4/5; object-fit: cover; display: block;">
+                    </div>
+                    @else
+                    <div class="thin-frame" style="aspect-ratio: 4/5; border-radius: 0.5rem; background: #f1eee7; display: flex; align-items: center; justify-content: center;">
+                        <span class="material-symbols-outlined" style="color: #c5c7c1; font-size: 64px;">design_services</span>
+                    </div>
+                    @endif
+                </div>
             </div>
 
-            <div style="display: flex; gap: 1rem; border-top: 1px solid color-mix(in srgb, var(--color-text) 8%, transparent); padding-top: 2rem;">
-                @if ($business->whatsapp)
-                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $business->whatsapp) }}?text=Hi! I'd like to book {{ $service->name }}"
-                       class="btn btn-primary" target="_blank" onclick="navigator.sendBeacon('{{ route('track.click', [$business->id, 'whatsapp_click']) }}?source=service&url='+encodeURIComponent(location.href));">
-                        Book via WhatsApp
-                    </a>
-                @endif
-                @if ($business->phone)
-                    <a href="tel:{{ $business->phone }}" class="btn btn-outline" onclick="navigator.sendBeacon('{{ route('track.click', [$business->id, 'phone_click']) }}?source=service&url='+encodeURIComponent(location.href));">
-                        Call to Book
-                    </a>
-                @endif
+            {{-- Reviews Section --}}
+            <div style="margin-top: 64px; margin-bottom: 64px;">
+                <span class="section-label" style="color: #6c5e06; margin-bottom: 16px; display: block;">REVIEWS</span>
+                <h2 style="font-family: 'Playfair Display', serif; font-style: italic; font-size: clamp(1.5rem, 3vw, 2rem); color: #1c1c18; margin-bottom: 32px;">What Customers Say</h2>
+                <livewire:review.review-display :businessId="$business->id" :key="'reviews-'.$business->id" />
+                @auth
+                    @if(auth()->user()->canReview($business))
+                        <a href="{{ route('review.create', $business) }}" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border: 0.5px solid #5e5f5c; color: #1c1c18; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; border-radius: 0.25rem; text-decoration: none; margin-top: 24px;">
+                            <span class="material-symbols-outlined" style="font-size: 16px;">rate_review</span> WRITE A REVIEW
+                        </a>
+                    @endif
+                @endauth
             </div>
         </div>
-    </section>
+    </main>
 
-    @include('themes::default.service.contact')
     @include('themes::default.service.footer')
 </div>

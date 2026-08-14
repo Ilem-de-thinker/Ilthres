@@ -29,7 +29,7 @@ return new class extends Migration
             $table->string('reference_type')->nullable();
             $table->unsignedBigInteger('reference_id')->nullable();
             $table->timestamps();
-            $table->index(['business_id', 'customer_identifier']);
+            $table->index(['business_id', 'customer_identifier'], 'loyalty_pts_biz_cust_idx');
         });
 
         Schema::create('referrals', function (Blueprint $table) {

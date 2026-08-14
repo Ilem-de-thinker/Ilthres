@@ -4,6 +4,7 @@ namespace App\Domains\Business\Actions;
 
 use App\Models\Business;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Uploads and assigns a new logo to a business.
@@ -17,7 +18,7 @@ class UploadLogo
     {
         // Delete the old logo if it exists.
         if ($business->logo) {
-            \Illuminate\Support\Facades\Storage::disk('public')->delete($business->logo);
+            Storage::disk('public')->delete($business->logo);
         }
 
         $path = $file->store('logos', 'public');

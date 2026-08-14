@@ -1,24 +1,25 @@
 {
     "name": "Bold",
     "slug": "bold",
-    "description": "Confident, typography-driven theme with dark accents and strong visual hierarchy.",
+    "description": "High-Impact Editorial — raw, authoritative aesthetics rooted in streetwear subculture and editorial magazines. Neo-Brutalist with heavy borders, zero border-radius, and Anton typography.",
     "thumbnail": null,
     "business_type": null,
     "is_premium": true,
     "sort_order": 2,
     "config": {
         "colors": {
-            "primary": "#0F172A",
-            "secondary": "#F59E0B",
-            "background": "#FFFFFF",
-            "text": "#0F172A",
-            "accent": "#EF4444"
+            "primary": "#ffffff",
+            "secondary": "#72ff70",
+            "background": "#131313",
+            "text": "#e2e2e2",
+            "accent": "#72ff70"
         },
         "typography": {
-            "heading": "Inter",
-            "body": "Inter"
+            "heading": "Anton",
+            "body": "Archivo Narrow",
+            "label": "Space Mono"
         },
-        "radius": "0.25rem",
+        "radius": "0rem",
         "animations": false
     }
 }

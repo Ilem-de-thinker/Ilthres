@@ -1,0 +1,29 @@
+{
+    "name": "Default",
+    "slug": "default",
+    "description": "Serene Ivory — airy minimalism with warm ivory surfaces, Playfair Display serif headlines, and delicate champagne gold accents.",
+    "version": "3.0.0",
+    "author": "IWH Design Lab",
+    "features": [
+        "hero",
+        "about",
+        "products",
+        "portfolio",
+        "contact",
+        "services",
+        "material-symbols",
+        "tailwindcss-cdn",
+        "scroll-animations"
+    ],
+    "colors": {
+        "primary": "#1c1c18",
+        "secondary": "#5e5f5c",
+        "background": "#fcf9f2",
+        "text": "#1c1c18",
+        "accent": "#6c5e06"
+    },
+    "fonts": {
+        "body": "Plus Jakarta Sans",
+        "display": "Playfair Display"
+    }
+}

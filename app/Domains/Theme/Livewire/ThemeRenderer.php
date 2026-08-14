@@ -15,6 +15,7 @@ use Livewire\Component;
 class ThemeRenderer extends Component
 {
     public Business $business;
+
     public bool $previewMode = false;
 
     public function render()

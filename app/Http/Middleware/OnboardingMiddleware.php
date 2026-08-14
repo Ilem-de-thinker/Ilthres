@@ -11,14 +11,14 @@ use Symfony\Component\HttpFoundation\Response;
  * if they haven't completed the onboarding wizard.
  *
  * Steps:
- *   0 → not started       → redirect to /onboarding
- *   1 → WhatsApp step
+ *   0 → not started       → redirect to /get-started (choice page)
+ *   1 → WhatsApp step     → redirect to /onboarding
  *   2 → Business type
  *   3 → Pricing
  *   4 → Setup
  *   5 → completed         → allow through
  *
- * Skips redirection if the user is already on the onboarding page
+ * Skips redirection if the user is already on the onboarding/get-started/link-business page
  * to avoid infinite redirect loops.
  */
 class OnboardingMiddleware
@@ -37,12 +37,17 @@ class OnboardingMiddleware
             return $next($request);
         }
 
-        // Already on the onboarding page — avoid redirect loop.
-        if ($request->routeIs('onboarding')) {
+        // Already on pages that must be accessible before onboarding — avoid redirect loop.
+        if ($request->routeIs('onboarding', 'get-started', 'link-business')) {
             return $next($request);
         }
 
-        // Redirect to the onboarding page.
+        // User hasn't started onboarding yet — show the choice page.
+        if ($user->onboarding_step === 0) {
+            return redirect()->route('get-started');
+        }
+
+        // User is in the middle of onboarding — resume the wizard.
         return redirect()->route('onboarding');
     }
 }

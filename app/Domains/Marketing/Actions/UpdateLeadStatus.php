@@ -2,8 +2,8 @@
 
 namespace App\Domains\Marketing\Actions;
 
-use App\Models\LeadSubmission;
 use App\Domains\Marketing\Events\LeadStatusChanged;
+use App\Models\LeadSubmission;
 
 class UpdateLeadStatus
 {

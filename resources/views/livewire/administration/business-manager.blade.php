@@ -5,15 +5,21 @@
         <p class="mt-1 text-sm text-gray-500">Search, filter, and manage all businesses on the platform.</p>
     </div>
 
-    <div class="mb-4 flex gap-3">
+    <div class="mb-4 flex flex-wrap gap-3">
         <input type="text" wire:model.live.debounce.300ms="search" placeholder="Search businesses..."
-            class="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none">
+            class="flex-1 min-w-[200px] rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none">
         <select wire:model.live="filterStatus"
             class="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-indigo-500 focus:outline-none">
-            <option value="">All</option>
+            <option value="">All Status</option>
             <option value="active">Active</option>
             <option value="suspended">Suspended</option>
             <option value="deleted">Deleted</option>
+        </select>
+        <select wire:model.live="filterType"
+            class="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-indigo-500 focus:outline-none">
+            <option value="">All Types</option>
+            <option value="linked">Linked</option>
+            <option value="hosted">Hosted</option>
         </select>
     </div>
 
@@ -32,7 +38,14 @@
             <tbody class="divide-y divide-gray-200 bg-white">
                 @forelse ($businesses as $business)
                     <tr class="hover:bg-gray-50">
-                        <td class="px-4 py-3 text-sm text-gray-900">{{ $business->name }}</td>
+                        <td class="px-4 py-3 text-sm text-gray-900">
+                            {{ $business->name }}
+                            @if ($business->website_url)
+                                <span class="ml-1.5 inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-medium text-blue-700">Linked</span>
+                            @else
+                                <span class="ml-1.5 inline-flex items-center rounded-full bg-purple-100 px-2 py-0.5 text-[10px] font-medium text-purple-700">Hosted</span>
+                            @endif
+                        </td>
                         <td class="px-4 py-3 text-sm text-gray-600">{{ $business->user?->name ?? '—' }}</td>
                         <td class="px-4 py-3 text-sm text-gray-500">
                             {{ $business->isProductStore() ? 'Store' : 'Service' }}
@@ -67,12 +80,10 @@
                             @else
                                 <div class="flex items-center justify-center gap-2">
                                     <span>{{ $business->subscription?->plan?->name ?? '—' }}</span>
-                                    @if ($business->subscription)
-                                        <button wire:click="startPlanChange({{ $business->id }})"
-                                            class="text-xs text-indigo-600 hover:text-indigo-500">
-                                            Change
-                                        </button>
-                                    @endif
+                                    <button wire:click="startPlanChange({{ $business->id }})"
+                                        class="text-xs text-indigo-600 hover:text-indigo-500">
+                                        Change
+                                    </button>
                                 </div>
                             @endif
                         </td>

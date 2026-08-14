@@ -5,9 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
+use Laravel\Scout\Searchable;
 
 /**
  * Represents a business profile on the Ilthres Market platform.
@@ -36,13 +39,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property bool $is_active
  * @property array|null $social_links
  * @property array|null $seo
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
  */
 class Business extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, Searchable, SoftDeletes;
 
     /** Business sells physical or digital products. */
     const TYPE_PRODUCT_STORE = 'product_store';
@@ -56,11 +59,12 @@ class Business extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'user_id', 'category_id', 'name', 'slug', 'type',
+        'user_id', 'category_id', 'name', 'slug', 'type', 'order_mode',
+        'bank_name', 'account_number', 'account_name',
         'description', 'about', 'email', 'phone', 'whatsapp',
         'address', 'city', 'state', 'country', 'latitude', 'longitude',
-        'logo', 'cover', 'is_verified', 'is_active', 'is_discoverable',
-        'social_links', 'seo',
+        'logo', 'cover', 'website_url', 'is_verified', 'is_active', 'is_discoverable',
+        'social_links', 'seo', 'tags', 'search_boost', 'last_indexed_at',
     ];
 
     /**
@@ -76,6 +80,8 @@ class Business extends Model
             'is_discoverable' => 'boolean',
             'social_links' => 'array',
             'seo' => 'array',
+            'tags' => 'array',
+            'last_indexed_at' => 'datetime',
         ];
     }
 
@@ -120,13 +126,54 @@ class Business extends Model
     }
 
     /**
+     * The website owned by this business.
+     */
+    public function website(): HasOne
+    {
+        return $this->hasOne(Website::class);
+    }
+
+    /**
      * The themes available to this business via the pivot table.
      */
     public function themes(): BelongsToMany
     {
         return $this->belongsToMany(Theme::class)
+            ->using(BusinessTheme::class)
             ->withPivot(['customization', 'is_active'])
             ->withTimestamps();
+    }
+
+    /**
+     * The reviews for this business.
+     */
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class)->where('is_active', true);
+    }
+
+    /**
+     * The bookings for this business.
+     */
+    public function bookings(): HasMany
+    {
+        return $this->hasMany(Booking::class);
+    }
+
+    /**
+     * The locations (branches) for this business.
+     */
+    public function locations(): HasMany
+    {
+        return $this->hasMany(BusinessLocation::class);
+    }
+
+    /**
+     * The primary location for this business.
+     */
+    public function primaryLocation(): HasOne
+    {
+        return $this->hasOne(BusinessLocation::class)->where('is_primary', true);
     }
 
     /**
@@ -135,6 +182,14 @@ class Business extends Model
     public function subscription()
     {
         return $this->hasOne(Subscription::class)->latest();
+    }
+
+    /**
+     * The latest KYC verification attempt for this business.
+     */
+    public function verification(): HasOne
+    {
+        return $this->hasOne(BusinessVerification::class)->latest();
     }
 
     /**
@@ -151,5 +206,81 @@ class Business extends Model
     public function isServiceBusiness(): bool
     {
         return $this->type === self::TYPE_SERVICE_BUSINESS;
+    }
+
+    /**
+     * Get the currency code used by this business's products/services.
+     */
+    public function getCurrencyCodeAttribute(): string
+    {
+        $productCurrency = $this->products()->whereNotNull('currency')->value('currency');
+        if ($productCurrency) {
+            return $productCurrency;
+        }
+
+        $serviceCurrency = $this->services()->whereNotNull('currency')->value('currency');
+        if ($serviceCurrency) {
+            return $serviceCurrency;
+        }
+
+        return 'NGN';
+    }
+
+    /**
+     * Get the rating distribution for this business.
+     */
+    public function getRatingDistributionAttribute(): array
+    {
+        return $this->reviews()
+            ->selectRaw('rating, count(*) as count')
+            ->groupBy('rating')
+            ->pluck('count', 'rating')
+            ->toArray();
+    }
+
+    /**
+     * Update the rating cache for this business.
+     */
+    public function updateRatingCache(): void
+    {
+        $this->update([
+            'average_rating' => $this->reviews()->avg('rating'),
+            'review_count' => $this->reviews()->count(),
+        ]);
+    }
+
+    /**
+     * Get the indexable data array for the model.
+     */
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'description' => $this->description ?? '',
+            'about' => $this->about ?? '',
+            'type' => $this->type,
+            'city' => $this->city ?? '',
+            'state' => $this->state ?? '',
+            'country' => $this->country ?? '',
+            'category_id' => $this->category_id,
+            'is_verified' => $this->is_verified,
+            'is_active' => $this->is_active,
+            'is_discoverable' => $this->is_discoverable,
+            'average_rating' => $this->average_rating ?? 0,
+            'review_count' => $this->review_count ?? 0,
+            'latitude' => $this->latitude,
+            'longitude' => $this->longitude,
+            'tags' => $this->tags ?? [],
+            'search_boost' => $this->search_boost ?? 0,
+        ];
+    }
+
+    /**
+     * Get the index name for the model.
+     */
+    public function searchableAs(): string
+    {
+        return 'businesses';
     }
 }

@@ -8,6 +8,7 @@ use App\Domains\Service\Actions\UpdateService;
 use App\Domains\Service\DTOs\ServiceData;
 use App\Models\Business;
 use App\Models\Media;
+use App\Models\PromoBanner;
 use App\Models\Service;
 use Illuminate\Support\Str;
 use Livewire\Component;
@@ -18,23 +19,37 @@ class ServiceForm extends Component
     use WithFileUploads;
 
     public ?int $businessId = null;
+
     public ?Business $business = null;
+
     public ?int $serviceId = null;
+
     public ?Service $service = null;
 
     public string $name = '';
+
     public ?string $description = null;
+
     public ?float $price = null;
+
     public string $currency = 'NGN';
+
     public ?int $durationMinutes = null;
+
     public bool $isActive = true;
+
     public bool $isPublic = false;
+
     public int $sortOrder = 0;
 
     public array $images = [];
 
+    public array $selectedBanners = [];
+
     public bool $showMediaPicker = false;
+
     public array $pendingImages = [];
+
     public $mediaUpload = null;
 
     protected function rules(): array
@@ -86,6 +101,7 @@ class ServiceForm extends Component
             $this->isPublic = $this->service->is_public;
             $this->sortOrder = $this->service->sort_order;
             $this->images = $this->service->images ?? [];
+            $this->selectedBanners = $this->service->banners()->pluck('promo_banners.id')->toArray();
         }
     }
 
@@ -97,7 +113,7 @@ class ServiceForm extends Component
             businessId: $this->business->id,
             categoryId: null,
             name: $this->name,
-            slug: Str::slug($this->name) . '-' . Str::random(4),
+            slug: Str::slug($this->name).'-'.Str::random(4),
             description: $this->description,
             price: (float) $this->price,
             currency: $this->currency,
@@ -109,7 +125,11 @@ class ServiceForm extends Component
         );
 
         $this->authorize('create', Service::class);
-        $action($data);
+        $service = $action($data);
+
+        if ($service && count($this->selectedBanners)) {
+            $service->banners()->sync($this->selectedBanners);
+        }
 
         $this->dispatch('service-saved');
     }
@@ -135,6 +155,8 @@ class ServiceForm extends Component
 
         $this->authorize('update', $this->service);
         $action($this->service, $data);
+
+        $this->service->banners()->sync($this->selectedBanners);
 
         $this->dispatch('service-saved');
     }
@@ -208,8 +230,17 @@ class ServiceForm extends Component
 
     public function render()
     {
+        $heroBanners = $this->business
+            ? PromoBanner::where('business_id', $this->business->id)
+                ->hero()
+                ->active()
+                ->ordered()
+                ->get()
+            : collect();
+
         return view('livewire.service.service-form', [
             'mediaItems' => $this->mediaItems,
+            'heroBanners' => $heroBanners,
         ]);
     }
 }

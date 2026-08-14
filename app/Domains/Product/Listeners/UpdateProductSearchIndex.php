@@ -8,24 +8,23 @@ use App\Domains\Product\Events\ProductUpdated;
 
 /**
  * Keeps the search index in sync with product changes.
- *
- * Listens to ProductCreated, ProductUpdated, and ProductDeleted
- * to add, update, or remove products from the search index.
  */
 class UpdateProductSearchIndex
 {
     public function created(ProductCreated $event): void
     {
-        //
+        $event->product->searchable();
+        $event->product->updateQuietly(['last_indexed_at' => now()]);
     }
 
     public function updated(ProductUpdated $event): void
     {
-        //
+        $event->product->searchable();
+        $event->product->updateQuietly(['last_indexed_at' => now()]);
     }
 
     public function deleted(ProductDeleted $event): void
     {
-        //
+        $event->product->unsearchable();
     }
 }

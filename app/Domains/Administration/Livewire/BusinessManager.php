@@ -20,8 +20,13 @@ class BusinessManager extends Component
     use WithPagination;
 
     public string $search = '';
+
     public string $filterStatus = '';
+
+    public string $filterType = '';
+
     public ?int $changingPlanFor = null;
+
     public ?int $selectedPlanId = null;
 
     /**
@@ -76,22 +81,28 @@ class BusinessManager extends Component
 
         if (! $this->selectedPlanId) {
             session()->flash('error', 'Please select a plan.');
+
             return;
         }
 
         $plan = Plan::find($this->selectedPlanId);
         if (! $plan) {
             session()->flash('error', 'Selected plan not found.');
+
             return;
         }
 
         if (! $business->subscription) {
             session()->flash('error', 'This business does not have a subscription.');
+
             return;
         }
 
         $oldPlan = $business->subscription->plan?->name ?? 'None';
-        $business->subscription->update(['plan_id' => $plan->id]);
+        $business->subscription->update([
+            'plan_id' => $plan->id,
+            'price_paid' => (float) $plan->price,
+        ]);
 
         $this->changingPlanFor = null;
         $this->selectedPlanId = null;
@@ -105,11 +116,13 @@ class BusinessManager extends Component
             ->with(['user', 'subscription.plan'])
             ->when($this->search, fn ($q) => $q->where(function ($q) {
                 $q->where('name', 'like', "%{$this->search}%")
-                  ->orWhere('email', 'like', "%{$this->search}%");
+                    ->orWhere('email', 'like', "%{$this->search}%");
             }))
             ->when($this->filterStatus === 'active', fn ($q) => $q->where('is_active', true))
             ->when($this->filterStatus === 'suspended', fn ($q) => $q->where('is_active', false))
             ->when($this->filterStatus === 'deleted', fn ($q) => $q->onlyTrashed())
+            ->when($this->filterType === 'linked', fn ($q) => $q->whereNotNull('website_url'))
+            ->when($this->filterType === 'hosted', fn ($q) => $q->whereNull('website_url'))
             ->latest()
             ->paginate(20);
 

@@ -1,133 +1,169 @@
-{{--
-  Default theme · Store product detail — single product with images, description, variants table.
---}}
+{{-- Default theme · Store product detail — Serene Ivory --}}
 @section('title', $product->name . ' — ' . $business->name)
 
-@push('styles')
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-    :root {
-        --color-primary: {{ $colors['primary'] ?? '#111827' }};
-        --color-secondary: {{ $colors['secondary'] ?? '#4B5563' }};
-        --color-background: {{ $colors['background'] ?? '#FFFFFF' }};
-        --color-text: {{ $colors['text'] ?? '#111827' }};
-        --color-accent: {{ $colors['accent'] ?? '#9CA3AF' }};
-        --font-heading: 'Inter', sans-serif;
-        --font-body: 'Inter', sans-serif;
-        --radius: {{ $radius ?? '0.375rem' }};
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: var(--font-body); background: var(--color-background); color: var(--color-text); line-height: 1.6; -webkit-font-smoothing: antialiased; }
-    a { color: var(--color-text); text-decoration: none; transition: opacity 0.15s ease; }
-    a:hover { opacity: 0.8; }
-    .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
-    
-    .btn {
-        display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
-        padding: 0.75rem 1.5rem; border-radius: var(--radius);
-        font-weight: 500; font-size: 0.875rem; border: 1px solid transparent; cursor: pointer;
-        transition: all 0.2s ease; text-decoration: none;
-    }
-    .btn-primary { background: var(--color-primary); color: var(--color-background); }
-    .btn-primary:hover { opacity: 0.9; }
-    .btn-outline { background: transparent; border: 1px solid var(--color-primary); color: var(--color-primary); }
+    body { background: #fcf9f2; color: #1c1c18; font-family: 'Plus Jakarta Sans', sans-serif; }
+    h1, h2, h3, h4 { font-family: 'Playfair Display', serif; line-height: 1.15; }
+    ::selection { background: #6c5e06; color: #fff; }
+    :root { --c-primary: {{ $colors['primary'] ?? '#1c1c18' }}; --c-secondary: {{ $colors['secondary'] ?? '#5e5f5c' }}; --c-bg: {{ $colors['background'] ?? '#fcf9f2' }}; --c-text: {{ $colors['text'] ?? '#1c1c18' }}; --c-accent: {{ $colors['accent'] ?? '#6c5e06' }}; }
+    .thin-frame { padding: 16px; border: 0.5px solid #E5E0D5; }
+    .subtle-shadow { box-shadow: 0px 10px 40px rgba(0,0,0,0.03); }
+    .section-label { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #f1eee7; }
+    ::-webkit-scrollbar-thumb { background: #c5c7c1; border-radius: 3px; }
 </style>
-@endpush
 
-<div>
+<div class="min-h-screen flex flex-col">
     @include('themes::default.store.header')
 
-    <section style="padding: 3rem 0; border-bottom: 1px solid color-mix(in srgb, var(--color-text) 8%, transparent);">
-        <div class="container">
-            <div style="margin-bottom: 2rem;">
-                <a href="{{ route('business.profile', $business) }}" style="display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; font-weight: 500; color: color-mix(in srgb, var(--color-text) 60%, transparent);">
-                    &larr; Back to Products
+    <main class="flex-1" style="padding-top: 112px; padding-bottom: 96px;">
+        <div style="max-width: 1280px; margin: 0 auto; padding: 0 64px;">
+            {{-- Breadcrumb --}}
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 48px;">
+                <a href="{{ route('business.site', $business) }}" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #6c5e06; text-decoration: none;" onmouseover="this.style.color='#1c1c18'" onmouseout="this.style.color='#6c5e06'">
+                    HOME
                 </a>
+                <span class="material-symbols-outlined" style="font-size: 14px; color: #c5c7c1;">chevron_right</span>
+                @if($product->category)
+                    <span style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #757873;">{{ strtoupper($product->category->name) }}</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; color: #c5c7c1;">chevron_right</span>
+                @endif
+                <span style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #1c1c18;">{{ $product->name }}</span>
             </div>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start;">
-                {{-- Images --}}
-                <div>
-                    @if ($product->images && count($product->images) > 0)
-                        <img src="{{ Storage::url($product->images[0]) }}" alt="{{ $product->name }}"
-                             style="width: 100%; border-radius: var(--radius); border: 1px solid color-mix(in srgb, var(--color-text) 8%, transparent); aspect-ratio: 1; object-fit: cover;">
-                        @if (count($product->images) > 1)
-                            <div style="display: flex; gap: 0.75rem; margin-top: 1rem; overflow-x: auto;">
-                                @foreach ($product->images as $img)
-                                    <img src="{{ Storage::url($img) }}" alt="" style="width: 4.5rem; height: 4.5rem; object-fit: cover; border-radius: calc(var(--radius) * 0.5); cursor: pointer; border: 1px solid color-mix(in srgb, var(--color-text) 8%, transparent);">
-                                @endforeach
+
+            {{-- Product Grid: 12-col --}}
+            <div style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 32px;">
+                {{-- Left: Product Gallery (7 cols) --}}
+                <div style="grid-column: 1 / 8; display: flex; flex-direction: column; gap: 16px;">
+                    {{-- Main Image --}}
+                    <div class="thin-frame" style="border-radius: 0.5rem; overflow: hidden;">
+                        @if ($product->images && count($product->images) > 0)
+                            <img src="{{ Storage::url($product->images[0]) }}" alt="{{ $product->name }}"
+                                 style="width: 100%; aspect-ratio: 4/5; object-fit: cover; display: block;">
+                        @else
+                            <div style="width: 100%; aspect-ratio: 4/5; background: #f1eee7; display: flex; align-items: center; justify-content: center;">
+                                <span class="material-symbols-outlined" style="color: #c5c7c1; font-size: 64px;">inventory_2</span>
                             </div>
                         @endif
-                    @else
-                        <div style="width: 100%; aspect-ratio: 1; background: color-mix(in srgb, var(--color-text) 3%, transparent); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; color: color-mix(in srgb, var(--color-text) 30%, transparent); font-size: 0.875rem; border: 1px solid color-mix(in srgb, var(--color-text) 8%, transparent);">
-                            No image available
+                    </div>
+
+                    {{-- Thumbnail Images --}}
+                    @if ($product->images && count($product->images) > 1)
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            @foreach (array_slice($product->images->toArray(), 0, 2) as $img)
+                                <div class="thin-frame" style="overflow: hidden; border-radius: 0.5rem; padding: 8px;">
+                                    <img src="{{ Storage::url($img) }}" alt=""
+                                         style="width: 100%; aspect-ratio: 1; object-fit: cover; display: block; border-radius: 0.25rem; cursor: pointer; transition: opacity 0.2s;"
+                                         onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+                                </div>
+                            @endforeach
                         </div>
                     @endif
                 </div>
 
-                {{-- Details --}}
-                <div>
-                    <h1 style="font-size: 2.25rem; font-weight: 600; margin-bottom: 1rem; line-height: 1.2;">{{ $product->name }}</h1>
-                    
-                    <div style="margin-bottom: 2rem;">
-                        <span style="font-weight: 700; font-size: 1.5rem; color: var(--color-primary);">
-                            @if ($product->variants && $product->variants->isNotEmpty())
-                                From {{ number_format($product->variants->min('price'), 2) }}
-                            @else
-                                {{ number_format($product->price, 2) }}
-                            @endif
-                        </span>
-                        @if ($product->compare_price && $product->compare_price > $product->price)
-                            <span style="font-size: 1.125rem; color: color-mix(in srgb, var(--color-text) 40%, transparent); text-decoration: line-through; margin-left: 0.5rem;">
-                                {{ number_format($product->compare_price, 2) }}
-                            </span>
+                {{-- Right: Product Info (5 cols) --}}
+                <div style="grid-column: 8 / 13; display: flex; flex-direction: column; gap: 24px;">
+                    {{-- Header --}}
+                    <div style="padding-bottom: 24px; border-bottom: 0.5px solid #E5E0D5;">
+                        @if ($product->is_featured)
+                            <span class="section-label" style="color: #6c5e06; margin-bottom: 12px; display: inline-block;">FEATURED</span>
+                        @endif
+                        <h1 style="font-family: 'Playfair Display', serif; font-style: italic; font-size: clamp(1.75rem, 3.5vw, 2.75rem); color: #1c1c18; margin-bottom: 16px;">
+                            {{ $product->name }}
+                        </h1>
+                        @if ($product->description)
+                            <p style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.9375rem; line-height: 1.7; color: #454843;">
+                                {{ $product->description }}
+                            </p>
                         @endif
                     </div>
 
-                    @if ($product->description)
-                        <p style="font-size: 1rem; line-height: 1.7; color: color-mix(in srgb, var(--color-text) 70%, transparent); margin-bottom: 2rem;">{{ $product->description }}</p>
-                    @endif
+                    {{-- Price --}}
+                    <div style="padding-bottom: 24px; border-bottom: 0.5px solid #E5E0D5;">
+                        <div style="display: flex; align-items: baseline; gap: 12px;">
+                            @if ($product->variants && $product->variants->isNotEmpty())
+                                <span style="font-family: 'Playfair Display', serif; font-size: 2rem; color: #1c1c18;">{{ \App\Support\Money\Money::format($product->variants->min('price'), $business->currency_code) }}+</span>
+                            @else
+                                <span style="font-family: 'Playfair Display', serif; font-size: 2rem; color: #1c1c18;">{{ \App\Support\Money\Money::format($product->price, $business->currency_code) }}</span>
+                            @endif
+                            @if ($product->compare_price && $product->compare_price > $product->price)
+                                <span style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1rem; color: #757873; text-decoration: line-through;">{{ \App\Support\Money\Money::format($product->compare_price, $business->currency_code) }}</span>
+                            @endif
+                        </div>
+                    </div>
 
                     {{-- Variants --}}
                     @if ($product->variants && $product->variants->isNotEmpty())
-                        <div style="margin-bottom: 2.5rem; border-top: 1px solid color-mix(in srgb, var(--color-text) 8%, transparent); padding-top: 1.5rem;">
-                            <h3 style="font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: color-mix(in srgb, var(--color-text) 50%, transparent); margin-bottom: 1rem;">Available Options</h3>
-                            <div style="display: flex; flex-direction: column; gap: 1rem;">
-                                @foreach ($product->variants as $variant)
-                                    <div>
-                                        <p style="font-size: 0.8125rem; font-weight: 600; color: var(--color-text); margin-bottom: 0.5rem;">{{ $variant['name'] }}</p>
-                                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
-                                            @foreach ($variant['options'] ?? [] as $option)
-                                                <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.375rem 0.75rem; border: 1px solid color-mix(in srgb, var(--color-text) 12%, transparent); border-radius: var(--radius); font-size: 0.8125rem;">
-                                                    @if (!empty($option['image']))
-                                                        <img src="{{ Storage::url($option['image']) }}" alt="" style="width: 1.25rem; height: 1.25rem; border-radius: 9999px; object-fit: cover;">
-                                                    @endif
-                                                    <span>{{ $option['value'] }}</span>
-                                                </div>
-                                            @endforeach
-                                        </div>
+                        <div>
+                            @foreach ($product->variants as $variant)
+                                <div style="margin-bottom: 20px;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                        <span class="section-label" style="color: #1c1c18;">{{ $variant['name'] }}</span>
                                     </div>
-                                @endforeach
-                            </div>
+                                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                                        @foreach ($variant['options'] ?? [] as $option)
+                                            <div style="display: flex; align-items: center; gap: 8px; padding: 8px 14px; border: 0.5px solid #E5E0D5; font-size: 0.8125rem; color: #454843; transition: all 0.2s; cursor: pointer; border-radius: 0.25rem;" onmouseover="this.style.borderColor='#1c1c18'" onmouseout="this.style.borderColor='#E5E0D5'">
+                                                @if (!empty($option['image']))
+                                                    <img src="{{ Storage::url($option['image']) }}" alt="" style="width: 20px; height: 20px; object-fit: cover; border-radius: 0.25rem;">
+                                                @endif
+                                                <span>{{ $option['value'] }}</span>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endforeach
                         </div>
                     @endif
 
-                    {{-- Contact CTA --}}
-                    <div style="border-top: 1px solid color-mix(in srgb, var(--color-text) 8%, transparent); padding-top: 1.5rem;">
+                    {{-- CTA Buttons --}}
+                    <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+                        @if ($business->order_mode === 'checkout')
+                            <form method="POST" action="{{ route('order.cart.add', ['business' => $business->slug, 'type' => 'product', 'id' => $product->id]) }}" style="flex: 1; display: flex;">
+                                @csrf
+                                <button type="submit"
+                                    style="display: inline-flex; align-items: center; gap: 8px; padding: 16px 40px; background: #1c1c18; color: #fcf9f2; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; border: 0.5px solid #1c1c18; border-radius: 0.25rem; transition: all 0.2s; text-decoration: none; width: 100%; justify-content: center; cursor: pointer;"
+                                    onmouseover="this.style.background='#454843'; this.style.borderColor='#454843';"
+                                    onmouseout="this.style.background='#1c1c18'; this.style.borderColor='#1c1c18';">
+                                    <span class="material-symbols-outlined" style="font-size: 16px;">shopping_bag</span> ADD TO CART
+                                </button>
+                            </form>
+                        @endif
                         @if ($business->whatsapp)
-                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $business->whatsapp) }}?text=Hi! I'm interested in {{ $product->name }}"
-                               class="btn btn-primary" target="_blank" onclick="navigator.sendBeacon('{{ route('track.click', [$business->id, 'whatsapp_click']) }}?source=product&url='+encodeURIComponent(location.href));">
-                                Purchase via WhatsApp
+                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $business->whatsapp) }}?text=Hi! I'm interested in "{{ $product->name }}" priced at {{ \App\Support\Money\Money::format($product->price, $business->currency_code) }}. Is it available?"
+                               target="_blank"
+                               style="display: inline-flex; align-items: center; gap: 8px; padding: 16px 40px; border: 0.5px solid #5e5f5c; color: #1c1c18; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; transition: all 0.2s; text-decoration: none; flex: 1; justify-content: center; border-radius: 0.25rem;"
+                               onmouseover="this.style.background='#1c1c18'; this.style.color='#fcf9f2'; this.style.borderColor='#1c1c18';"
+                               onmouseout="this.style.background='transparent'; this.style.color='#1c1c18'; this.style.borderColor='#5e5f5c';"
+                               onclick="navigator.sendBeacon('{{ route('track.click', [$business->id, 'whatsapp_click']) }}?source=product&url='+encodeURIComponent(location.href));">
+                                <span class="material-symbols-outlined" style="font-size: 16px;">chat</span> INQUIRE
                             </a>
                         @endif
+                        @if ($business->phone)
+                            <a href="tel:{{ $business->phone }}"
+                               style="display: inline-flex; align-items: center; gap: 8px; padding: 16px 40px; border: 0.5px solid #5e5f5c; color: #1c1c18; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; transition: all 0.2s; text-decoration: none; flex: 1; justify-content: center; border-radius: 0.25rem;"
+                               onmouseover="this.style.background='#1c1c18'; this.style.color='#fcf9f2'; this.style.borderColor='#1c1c18';"
+                               onmouseout="this.style.background='transparent'; this.style.color='#1c1c18'; this.style.borderColor='#5e5f5c';">
+                                <span class="material-symbols-outlined" style="font-size: 16px;">call</span> CALL NOW
+                            </a>
+                        @endif
+                    </div>
+
+                    {{-- Accordion Details --}}
+                    <div style="border-top: 0.5px solid #E5E0D5; margin-top: 8px;">
+                        <div style="border-bottom: 0.5px solid #E5E0D5; padding: 16px 0; display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+                            <span class="section-label" style="color: #1c1c18;">Specifications</span>
+                            <span class="material-symbols-outlined" style="color: #757873; font-size: 20px;">add</span>
+                        </div>
+                        <div style="border-bottom: 0.5px solid #E5E0D5; padding: 16px 0; display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+                            <span class="section-label" style="color: #1c1c18;">Shipping & Returns</span>
+                            <span class="material-symbols-outlined" style="color: #757873; font-size: 20px;">add</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </main>
 
-    @include('themes::default.store.contact')
     @include('themes::default.store.footer')
 </div>

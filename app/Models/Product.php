@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
+use Laravel\Scout\Searchable;
 
 /**
  * Represents a product sold by a product-store business.
@@ -25,13 +27,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property bool $is_active
  * @property bool $is_featured
  * @property int $sort_order
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
  */
 class Product extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, Searchable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -42,6 +44,7 @@ class Product extends Model
         'business_id', 'category_id', 'name', 'slug',
         'description', 'price', 'compare_price', 'currency',
         'images', 'variants', 'is_active', 'is_featured', 'is_public', 'sort_order',
+        'tags', 'last_indexed_at',
     ];
 
     /**
@@ -59,6 +62,8 @@ class Product extends Model
             'is_active' => 'boolean',
             'is_featured' => 'boolean',
             'is_public' => 'boolean',
+            'tags' => 'array',
+            'last_indexed_at' => 'datetime',
         ];
     }
 
@@ -87,6 +92,14 @@ class Product extends Model
     }
 
     /**
+     * Promo banners that feature this product.
+     */
+    public function banners(): MorphToMany
+    {
+        return $this->morphToMany(PromoBanner::class, 'bannerable');
+    }
+
+    /**
      * Get the best active promotion for this product.
      */
     public function scopeWithBestPromotion($query)
@@ -111,5 +124,34 @@ class Product extends Model
             ->filter(fn ($p) => $p->isRunning())
             ->sortByDesc(fn ($p) => [$p->priority, $p->discount_value ?? 0])
             ->first();
+    }
+
+    /**
+     * Get the indexable data array for the model.
+     */
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'business_id' => $this->business_id,
+            'name' => $this->name,
+            'description' => $this->description ?? '',
+            'price' => $this->price,
+            'compare_price' => $this->compare_price,
+            'currency' => $this->currency,
+            'category_id' => $this->category_id,
+            'is_active' => $this->is_active,
+            'is_featured' => $this->is_featured,
+            'is_public' => $this->is_public,
+            'tags' => $this->tags ?? [],
+        ];
+    }
+
+    /**
+     * Get the index name for the model.
+     */
+    public function searchableAs(): string
+    {
+        return 'products';
     }
 }

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Transaction extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'business_id', 'subscription_id', 'reference', 'amount',
         'currency', 'status', 'description', 'gateway',

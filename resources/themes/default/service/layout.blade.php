@@ -1,74 +1,54 @@
-{{--
-  Default theme · Service layout — minimalist, high-end presentation (Apple style).
---}}
+{{-- Default theme · Service layout — Serene Ivory --}}
 @section('title', $business->name . ' — Services')
 
 @push('styles')
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
     :root {
-        --color-primary: {{ $colors['primary'] ?? '#111827' }};
-        --color-secondary: {{ $colors['secondary'] ?? '#4B5563' }};
-        --color-background: {{ $colors['background'] ?? '#FFFFFF' }};
-        --color-text: {{ $colors['text'] ?? '#111827' }};
-        --color-accent: {{ $colors['accent'] ?? '#9CA3AF' }};
-        --font-heading: 'Inter', sans-serif;
-        --font-body: 'Inter', sans-serif;
-        --radius: {{ $radius ?? '0.375rem' }};
+        --c-primary: {{ $colors['primary'] ?? '#1c1c18' }};
+        --c-secondary: {{ $colors['secondary'] ?? '#5e5f5c' }};
+        --c-bg: {{ $colors['background'] ?? '#fcf9f2' }};
+        --c-text: {{ $colors['text'] ?? '#1c1c18' }};
+        --c-accent: {{ $colors['accent'] ?? '#6c5e06' }};
+        --c-font-heading: '{{ $typography['heading'] ?? 'Playfair Display' }}', serif;
+        --c-font-body: '{{ $typography['body'] ?? 'Plus Jakarta Sans' }}', sans-serif;
+        --c-radius: {{ $radius ?? '0.25rem' }};
     }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: var(--font-body); background: var(--color-background); color: var(--color-text); line-height: 1.6; -webkit-font-smoothing: antialiased; }
-    a { color: var(--color-text); text-decoration: none; transition: opacity 0.15s ease; }
-    a:hover { opacity: 0.8; }
-    
-    .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
-    section { padding: 5rem 0; border-bottom: 1px solid color-mix(in srgb, var(--color-text) 8%, transparent); }
-    h1, h2, h3, h4 { font-family: var(--font-heading); color: var(--color-text); line-height: 1.25; }
-    img { max-width: 100%; height: auto; display: block; }
-    
-    /* Elegant Buttons */
-    .btn {
-        display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
-        padding: 0.75rem 1.5rem; border-radius: var(--radius);
-        font-weight: 500; font-size: 0.875rem; border: 1px solid transparent; cursor: pointer;
-        transition: all 0.2s ease; text-decoration: none;
-    }
-    .btn-primary { 
-        background: var(--color-primary); 
-        color: var(--color-background); 
-    }
-    .btn-primary:hover { 
-        opacity: 0.9;
-    }
-    .btn-outline { 
-        background: transparent; 
-        border: 1px solid color-mix(in srgb, var(--color-text) 20%, transparent); 
-        color: var(--color-text); 
-    }
-    .btn-outline:hover { 
-        background: color-mix(in srgb, var(--color-text) 4%, transparent);
-    }
-    
-    /* Clean Grids */
-    .grid { display: grid; gap: 2rem; }
-    .grid-2 { grid-template-columns: repeat(2, 1fr); }
-    .grid-3 { grid-template-columns: repeat(3, 1fr); }
-    .grid-4 { grid-template-columns: repeat(4, 1fr); }
-    @media (max-width: 991px) { .grid-4 { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 768px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } .container { padding: 0 1.25rem; } section { padding: 3.5rem 0; } }
-    
-    .section-title { font-size: 1.75rem; font-weight: 500; margin-bottom: 3rem; text-align: center; letter-spacing: -0.01em; }
+    body { background: var(--c-bg); color: var(--c-text); font-family: var(--c-font-body); }
+    h1, h2, h3, h4 { font-family: var(--c-font-heading); line-height: 1.15; }
+    ::selection { background: var(--c-accent); color: #fff; }
+
+    [style*="background: #fcf9f2"] { background: var(--c-bg) !important; }
+    [style*="background: #1c1c18"] { background: var(--c-primary) !important; }
+    [style*="color: #1c1c18"] { color: var(--c-text) !important; }
+    [style*="color: #fcf9f2"] { color: var(--c-bg) !important; }
+    [style*="color: #6c5e06"] { color: var(--c-accent) !important; }
+    [style*="color: #5e5f5c"] { color: var(--c-secondary) !important; }
+    [style*="background: #6c5e06"] { background: var(--c-accent) !important; }
+    [style*="border: 0.5px solid #E5E0D5"],
+    [style*="border: 0.5px solid #e5e0d5"] { border-color: color-mix(in srgb, var(--c-text) 20%, transparent) !important; }
+    [style*="font-family: 'Playfair Display'"] { font-family: var(--c-font-heading) !important; }
+    [style*="font-family: 'Plus Jakarta Sans'"] { font-family: var(--c-font-body) !important; }
+
+    @if (!($animations ?? true))
+        *, *::before, *::after { animation-duration: 0s !important; transition-duration: 0s !important; }
+    @endif
+
+    .thin-frame { padding: 16px; border: 0.5px solid color-mix(in srgb, var(--c-text) 20%, transparent); }
+    .subtle-shadow { box-shadow: 0px 10px 40px rgba(0,0,0,0.03); }
+    .section-label { font-family: var(--c-font-body); font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: color-mix(in srgb, var(--c-bg) 90%, var(--c-text)); }
+    ::-webkit-scrollbar-thumb { background: var(--c-secondary); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--c-text); }
 </style>
 @endpush
 
-<div>
+<div class="min-h-screen flex flex-col">
     @include('themes::default.service.header')
-    @include('themes::default.service.hero')
-    @include('themes::default.service.about')
-    @include('themes::default.service.portfolio')
-    @include('themes::default.service.services')
-    @include('themes::default.service.contact')
+    <main class="flex-1 pt-0">
+        @include('themes::default.service.hero')
+        @include('themes::default.service.about')
+        @include('themes::default.service.services')
+    </main>
     @include('themes::default.service.footer')
 </div>

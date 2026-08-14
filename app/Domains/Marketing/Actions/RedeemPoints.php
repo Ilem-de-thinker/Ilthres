@@ -2,9 +2,9 @@
 
 namespace App\Domains\Marketing\Actions;
 
+use App\Domains\Marketing\Events\PointsRedeemed;
 use App\Models\LoyaltyPointsTransaction;
 use App\Models\LoyaltyProgram;
-use App\Domains\Marketing\Events\PointsRedeemed;
 
 class RedeemPoints
 {

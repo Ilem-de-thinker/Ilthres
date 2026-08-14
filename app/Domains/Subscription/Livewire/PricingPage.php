@@ -21,15 +21,38 @@ class PricingPage extends Component
         }
 
         $business = $user->businesses()->first();
-        $subscription = $business?->subscription;
 
-        if (! $business || ! $subscription) {
+        if (! $business) {
+            $this->redirect(route('onboarding'));
+
+            return;
+        }
+
+        // Linked businesses cannot change plans — redirect to dashboard.
+        if ($business->website_url) {
+            session()->flash('error', 'Linked businesses cannot change plans. Contact support to switch your plan type.');
+            $this->redirect(route('dashboard'));
+
+            return;
+        }
+
+        $subscription = $business->subscription;
+
+        if (! $subscription) {
             $this->redirect(route('onboarding'));
 
             return;
         }
 
         $currentPlan = $subscription->plan;
+
+        // Don't allow switching to or from linked_business plan.
+        if ($currentPlan && $currentPlan->slug === 'linked_business' || $plan->slug === 'linked_business') {
+            session()->flash('error', 'This plan is not available for changes.');
+            $this->redirect(route('dashboard.subscription'));
+
+            return;
+        }
 
         if ($currentPlan && $currentPlan->id === $plan->id) {
             $this->redirect(route('dashboard'));
@@ -41,7 +64,7 @@ class PricingPage extends Component
         $targetIsPaid = (float) $plan->price > 0;
 
         if (! $isPaying && ! $targetIsPaid) {
-            $subscription->update(['plan_id' => $plan->id]);
+            $subscription->update(['plan_id' => $plan->id, 'price_paid' => 0]);
             session()->flash('success', "Plan changed to {$plan->name}.");
             $this->redirect(route('dashboard.subscription'));
 
@@ -49,7 +72,7 @@ class PricingPage extends Component
         }
 
         if ($isPaying && ! $targetIsPaid) {
-            $subscription->update(['scheduled_plan_id' => $plan->id]);
+            $subscription->update(['scheduled_plan_id' => $plan->id, 'price_paid' => 0]);
             session()->flash('success', "Your plan will be downgraded to {$plan->name} on {$subscription->ends_at->format('M j, Y')} when your current billing period ends.");
             $this->redirect(route('dashboard.subscription'));
 
@@ -69,7 +92,7 @@ class PricingPage extends Component
             $amountInKobo = (int) ($amountToCharge * 100);
 
             if ($amountInKobo <= 0) {
-                $subscription->update(['plan_id' => $plan->id]);
+                $subscription->update(['plan_id' => $plan->id, 'price_paid' => (float) $plan->price]);
                 $subscription->update(['ends_at' => now()->addMonth()]);
                 session()->flash('success', "Upgraded to {$plan->name}.");
                 $this->redirect(route('dashboard.subscription'));
@@ -83,7 +106,7 @@ class PricingPage extends Component
         }
 
         if ($isPaying && $targetIsPaid && $plan->sort_order < $currentPlan->sort_order) {
-            $subscription->update(['scheduled_plan_id' => $plan->id]);
+            $subscription->update(['scheduled_plan_id' => $plan->id, 'price_paid' => (float) $plan->price]);
             session()->flash('success', "Your plan will be changed to {$plan->name} on {$subscription->ends_at->format('M j, Y')} when your current billing period ends.");
             $this->redirect(route('dashboard.subscription'));
 
@@ -100,7 +123,8 @@ class PricingPage extends Component
         $endsAt = $subscription->ends_at ?: $now->copy()->addMonth();
         $totalDays = $now->diffInDays($endsAt->copy()->subMonth(), true) ?: 30;
         $remainingDays = max(0, $now->diffInDays($endsAt, true));
-        $dailyRate = (float) $currentPlan->price / max(1, $totalDays);
+        $originalPrice = $subscription->price_paid ?? (float) $currentPlan->price;
+        $dailyRate = $originalPrice / max(1, $totalDays);
 
         return round($dailyRate * $remainingDays, 2);
     }
@@ -158,12 +182,19 @@ class PricingPage extends Component
 
     public function render()
     {
+        $user = auth()->user();
+        $business = $user?->businesses()->first();
+        $isLinkedBusiness = $business && $business->website_url;
+
+        // Don't show linked_business plan on pricing page (it's only available during link-business flow).
         $plans = Plan::where('is_active', true)
+            ->where('slug', '!=', 'linked_business')
             ->orderBy('sort_order')
             ->get();
 
         return view('livewire.subscription.pricing-page', [
             'plans' => $plans,
+            'isLinkedBusiness' => $isLinkedBusiness,
         ]);
     }
 }

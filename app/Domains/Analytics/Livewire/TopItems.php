@@ -7,10 +7,12 @@ use App\Models\AnalyticsEvent;
 use App\Models\Business;
 use App\Models\Product;
 use App\Models\Service;
+use Livewire\Component;
 
-class TopItems extends \Livewire\Component
+class TopItems extends Component
 {
     public Business $business;
+
     public int $limit = 5;
 
     public function render(GenerateReport $report)

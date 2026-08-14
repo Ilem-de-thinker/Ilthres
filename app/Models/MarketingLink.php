@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class MarketingLink extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'business_id', 'name', 'slug', 'url', 'description', 'is_active',
     ];

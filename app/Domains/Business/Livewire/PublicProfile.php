@@ -6,8 +6,9 @@ use App\Domains\Analytics\Actions\RecordEvent;
 use App\Models\AnalyticsEvent;
 use App\Models\Business;
 use App\Models\Product;
+use App\Models\PromoBanner;
 use App\Models\Service;
-use App\Models\Theme;
+use App\Services\ThemeEngine;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -22,13 +23,26 @@ use Livewire\Component;
 class PublicProfile extends Component
 {
     public Business $business;
+
     public ?Product $product = null;
+
     public ?Service $service = null;
 
     public ?Theme $previewTheme = null;
 
     public function mount(?Product $product = null, ?Service $service = null): void
     {
+        if (! isset($this->business)) {
+            $resolved = current_business();
+            if ($resolved) {
+                $this->business = $resolved;
+            }
+        }
+
+        if (! isset($this->business)) {
+            abort(404);
+        }
+
         abort_if(! $this->business->is_active, 404);
 
         if ($product) {
@@ -76,45 +90,12 @@ class PublicProfile extends Component
 
     public function render()
     {
-        if ($this->previewTheme) {
-            $activeTheme = $this->previewTheme;
-        } else {
-            $activeTheme = $this->business->themes()
-                ->wherePivot('is_active', true)
-                ->first();
-        }
+        $themeEngine = app(ThemeEngine::class);
 
-        if (! $activeTheme) {
-            $activeTheme = Theme::whereNull('business_type')
-                ->orWhere('business_type', $this->business->type)
-                ->orderByRaw("CASE WHEN business_type = ? THEN 0 ELSE 1 END", [$this->business->type])
-                ->first() ?? Theme::where('slug', 'default')->first();
-        }
+        $activeTheme = $themeEngine->resolveTheme($this->business, $this->previewTheme);
+        $config = $themeEngine->getThemeConfig($this->business, $this->previewTheme);
 
-        $slug = $activeTheme?->slug ?? 'default';
         $type = $this->business->isProductStore() ? 'store' : 'service';
-
-        $config = $activeTheme?->config ?? [];
-        $customization = $this->previewTheme ? [] : ($activeTheme?->pivot->customization ?? []);
-
-        $defaultColors = [
-            'primary' => '#111827',
-            'secondary' => '#4B5563',
-            'background' => '#FFFFFF',
-            'text' => '#111827',
-            'accent' => '#9CA3AF',
-        ];
-
-        $colors = array_merge(
-            $defaultColors,
-            $config['colors'] ?? [],
-            $customization['colors'] ?? []
-        );
-        $typography = array_merge(
-            $config['typography'] ?? [],
-            $customization['typography'] ?? []
-        );
-        $radius = $customization['radius'] ?? $config['radius'] ?? '0.5rem';
 
         $products = $this->business->isProductStore()
             ? $this->business->products()->latest()->get()
@@ -123,27 +104,43 @@ class PublicProfile extends Component
             ? $this->business->services()->latest()->get()
             : collect();
 
+        $heroBanners = PromoBanner::where('business_id', $this->business->id)
+            ->hero()
+            ->active()
+            ->ordered()
+            ->with($this->business->isProductStore() ? 'products' : 'services')
+            ->get();
+
+        $website = $this->business->website;
+        $sections = $website
+            ? $themeEngine->getPageSections($website, 'home')
+            : collect();
+
         if ($this->product) {
-            $view = "themes::{$slug}.{$type}.product-detail";
+            $view = "themes::{$config['slug']}.{$type}.product-detail";
         } elseif ($this->service) {
-            $view = "themes::{$slug}.{$type}.service-detail";
+            $view = "themes::{$config['slug']}.{$type}.service-detail";
         } else {
-            $view = "themes::{$slug}.{$type}.layout";
+            $view = "themes::{$config['slug']}.{$type}.layout";
         }
 
         if (! view()->exists($view)) {
-            $view = "themes::default.{$type}." . ($this->product ? 'product-detail' : ($this->service ? 'service-detail' : 'layout'));
+            $view = "themes::default.{$type}.".($this->product ? 'product-detail' : ($this->service ? 'service-detail' : 'layout'));
         }
 
         return view($view, [
             'business' => $this->business,
-            'colors' => $colors,
-            'typography' => $typography,
-            'radius' => $radius,
+            'colors' => $config['colors'],
+            'typography' => $config['typography'],
+            'radius' => $config['radius'],
+            'animations' => $config['animations'],
             'products' => $products,
             'services' => $services,
             'product' => $this->product,
             'service' => $this->service,
+            'heroBanners' => $heroBanners,
+            'sections' => $sections,
+            'theme' => $activeTheme,
         ]);
     }
 }

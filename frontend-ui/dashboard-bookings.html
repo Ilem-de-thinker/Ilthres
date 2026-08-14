@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookings — OmniBusiness</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+                    colors: {
+                        brand: { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' },
+                        emerald: { 50: '#ecfdf5', 100: '#d1fae5', 500: '#10b981', 600: '#059669' },
+                        amber: { 50: '#fffbeb', 500: '#f59e0b' },
+                        danger: { 50: '#fef2f2', 500: '#ef4444' },
+                        surface: { DEFAULT: '#ffffff', secondary: '#f8fafc' },
+                        content: { DEFAULT: '#111827', muted: '#6b7280' },
+                        line: { DEFAULT: '#e5e7eb' },
+                    },
+                },
+            },
+        }
+    </script>
+    <style>[x-cloak] { display: none !important; }</style>
+</head>
+<body class="bg-surface-secondary text-content antialiased font-sans">
+
+    <div class="flex h-screen overflow-hidden" x-data="{ sidebarOpen: true, mobileSidebar: false, viewMode: 'list', activeTab: 'all',
+        bookings: [
+            { id: 1, customer: 'Rachel Davis', initials: 'RD', email: 'rachel@email.com', color: 'brand', service: 'Private Dining', date: 'Jul 12, 2026', time: '7:30 PM', party: 4, status: 'Confirmed' },
+            { id: 2, customer: 'James Chen', initials: 'JC', email: 'james@email.com', color: 'emerald', service: 'Omakase Counter', date: 'Jul 12, 2026', time: '8:00 PM', party: 2, status: 'Pending' },
+            { id: 3, customer: 'Lisa Park', initials: 'LP', email: 'lisa@email.com', color: 'purple', service: 'Private Dining', date: 'Jul 13, 2026', time: '6:30 PM', party: 6, status: 'Confirmed' },
+            { id: 4, customer: 'Michael Torres', initials: 'MT', email: 'michael@email.com', color: 'amber', service: 'Sushi Bar', date: 'Jul 10, 2026', time: '7:00 PM', party: 3, status: 'Completed' },
+            { id: 5, customer: 'Sarah Kim', initials: 'SK', email: 'sarah@email.com', color: 'pink', service: 'Private Dining', date: 'Jul 9, 2026', time: '8:30 PM', party: 5, status: 'Cancelled' },
+        ],
+        get filtered() {
+            if (this.activeTab === 'all') return this.bookings;
+            return this.bookings.filter(b => b.status.toLowerCase() === this.activeTab);
+        },
+        getTabCount(tab) {
+            if (tab === 'all') return this.bookings.length;
+            return this.bookings.filter(b => b.status.toLowerCase() === tab).length;
+        }
+    }">
+
+        <!-- Sidebar -->
+        <aside :class="sidebarOpen ? 'lg:w-64' : 'lg:w-20'" class="hidden lg:flex lg:flex-col bg-white border-r border-line flex-shrink-0 transition-all duration-300">
+            <div class="flex items-center justify-between h-16 px-4 border-b border-line">
+                <a href="index.html" class="flex items-center gap-2.5">
+                    <div class="flex h-9 w-9 items-center justify-center rounded-2xl bg-brand-600 text-white flex-shrink-0">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016A3.001 3.001 0 0021 9.349m-18 0V6a2.25 2.25 0 012.25-2.25h15A2.25 2.25 0 0121 6v3.349"/></svg>
+                    </div>
+                    <span x-show="sidebarOpen" x-cloak class="text-base font-semibold text-content whitespace-nowrap">OmniBusiness</span>
+                </a>
+            </div>
+            <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+                <a href="dashboard.html" class="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium text-content-muted hover:text-content hover:bg-surface-secondary transition-colors">
+                    <svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
+                    <span x-show="sidebarOpen" x-cloak>Dashboard</span>
+                </a>
+                <a href="dashboard-products.html" class="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium text-content-muted hover:text-content hover:bg-surface-secondary transition-colors">
+                    <svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/></svg>
+                    <span x-show="sidebarOpen" x-cloak>Products</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium text-content-muted hover:text-content hover:bg-surface-secondary transition-colors">
+                    <svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/></svg>
+                    <span x-show="sidebarOpen" x-cloak>Customers</span>
+                </a>
+                <a href="dashboard-bookings.html" class="flex items-center gap-3 rounded-2xl bg-brand-50 px-3 py-2.5 text-sm font-medium text-brand-700">
+                    <svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/></svg>
+                    <span x-show="sidebarOpen" x-cloak>Bookings</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium text-content-muted hover:text-content hover:bg-surface-secondary transition-colors">
+                    <svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155"/></svg>
+                    <span x-show="sidebarOpen" x-cloak>Messages</span>
+                    <span x-show="sidebarOpen" x-cloak class="ml-auto rounded-full bg-danger-500 px-2 py-0.5 text-xs font-medium text-white">3</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium text-content-muted hover:text-content hover:bg-surface-secondary transition-colors">
+                    <svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/></svg>
+                    <span x-show="sidebarOpen" x-cloak>Reviews</span>
+                </a>
+                <div class="pt-2" x-show="sidebarOpen" x-cloak><div class="h-px bg-line mx-2"></div></div>
+                <a href="#" class="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium text-content-muted hover:text-content hover:bg-surface-secondary transition-colors">
+                    <svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42"/></svg>
+                    <span x-show="sidebarOpen" x-cloak>Website</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium text-content-muted hover:text-content hover:bg-surface-secondary transition-colors">
+                    <svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg>
+                    <span x-show="sidebarOpen" x-cloak>Analytics</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium text-content-muted hover:text-content hover:bg-surface-secondary transition-colors">
+                    <svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 110-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.461a20.845 20.845 0 01-1.44-4.282m3.102.069a18.03 18.03 0 01-.59-4.59c0-1.586.205-3.124.59-4.59m0 9.18a23.848 23.848 0 018.835 2.535M10.34 6.66a23.847 23.847 0 008.835-2.535m0 0A23.74 23.74 0 0018.795 3m.38 1.125a23.91 23.91 0 011.014 5.395m-1.014 8.855c-.118.38-.245.754-.38 1.125m.38-1.125a23.91 23.91 0 001.014-5.395m0-3.46c.495.413.811 1.035.811 1.73 0 .695-.316 1.317-.811 1.73m0-3.46a24.347 24.347 0 010 3.46"/></svg>
+                    <span x-show="sidebarOpen" x-cloak>Marketing</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium text-content-muted hover:text-content hover:bg-surface-secondary transition-colors">
+                    <svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    <span x-show="sidebarOpen" x-cloak>Settings</span>
+                </a>
+            </nav>
+            <div class="border-t border-line p-3">
+                <button @click="sidebarOpen = !sidebarOpen" class="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium text-content-muted hover:text-content hover:bg-surface-secondary transition-colors w-full">
+                    <svg :class="sidebarOpen ? '' : 'rotate-180'" class="h-5 w-5 flex-shrink-0 transition-transform" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5"/></svg>
+                    <span x-show="sidebarOpen" x-cloak>Collapse</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Mobile sidebar overlay -->
+        <div x-show="mobileSidebar" x-cloak x-transition:enter="transition-opacity ease-linear duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity ease-linear duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="mobileSidebar = false" class="fixed inset-0 z-40 bg-black/40 lg:hidden"></div>
+
+        <!-- Main content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Top nav -->
+            <header class="h-16 bg-white border-b border-line flex items-center justify-between px-4 lg:px-6 flex-shrink-0">
+                <div class="flex items-center gap-3">
+                    <button @click="mobileSidebar = true" class="lg:hidden p-2 rounded-xl hover:bg-surface-secondary transition-colors">
+                        <svg class="h-5 w-5 text-content-muted" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
+                    </button>
+                    <div class="hidden sm:flex items-center rounded-2xl border border-line bg-surface-secondary px-4 py-2 focus-within:border-brand-400 focus-within:bg-white transition-all w-72">
+                        <svg class="h-4 w-4 text-content-muted flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
+                        <input type="text" placeholder="Search..." class="flex-1 bg-transparent px-3 text-sm outline-none placeholder:text-content-muted/60">
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button class="relative p-2 rounded-xl hover:bg-surface-secondary transition-colors">
+                        <svg class="h-5 w-5 text-content-muted" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"/></svg>
+                        <span class="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-danger-500"></span>
+                    </button>
+                    <div class="h-8 w-8 rounded-full bg-brand-100 flex items-center justify-center text-sm font-semibold text-brand-700 cursor-pointer">SR</div>
+                </div>
+            </header>
+
+            <!-- Page content -->
+            <main class="flex-1 overflow-y-auto p-4 lg:p-8">
+                <div class="max-w-7xl mx-auto">
+                    <!-- Page header -->
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+                        <div>
+                            <h1 class="text-2xl font-bold text-content">Bookings</h1>
+                            <p class="mt-1 text-sm text-content-muted">Manage reservations and guest bookings.</p>
+                        </div>
+                        <div class="flex items-center gap-2 self-start">
+                            <div class="inline-flex items-center rounded-2xl border border-line bg-white p-1">
+                                <button @click="viewMode = 'list'" :class="viewMode === 'list' ? 'bg-brand-50 text-brand-700' : 'text-content-muted hover:text-content'" class="inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-medium transition-colors">
+                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z"/></svg>
+                                    List
+                                </button>
+                                <button @click="viewMode = 'calendar'" :class="viewMode === 'calendar' ? 'bg-brand-50 text-brand-700' : 'text-content-muted hover:text-content'" class="inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-medium transition-colors">
+                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/></svg>
+                                    Calendar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Filter tabs -->
+                    <div class="flex items-center gap-1 mb-6 overflow-x-auto pb-1">
+                        <button @click="activeTab = 'all'" :class="activeTab === 'all' ? 'bg-brand-50 text-brand-700' : 'text-content-muted hover:text-content hover:bg-surface-secondary'" class="rounded-2xl px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap">All <span class="ml-1 text-xs opacity-60" x-text="'(' + getTabCount('all') + ')'"></span></button>
+                        <button @click="activeTab = 'pending'" :class="activeTab === 'pending' ? 'bg-amber-50 text-amber-600' : 'text-content-muted hover:text-content hover:bg-surface-secondary'" class="rounded-2xl px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap">Pending <span class="ml-1 text-xs opacity-60" x-text="'(' + getTabCount('pending') + ')'"></span></button>
+                        <button @click="activeTab = 'confirmed'" :class="activeTab === 'confirmed' ? 'bg-emerald-50 text-emerald-600' : 'text-content-muted hover:text-content hover:bg-surface-secondary'" class="rounded-2xl px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap">Confirmed <span class="ml-1 text-xs opacity-60" x-text="'(' + getTabCount('confirmed') + ')'"></span></button>
+                        <button @click="activeTab = 'completed'" :class="activeTab === 'completed' ? 'bg-brand-50 text-brand-700' : 'text-content-muted hover:text-content hover:bg-surface-secondary'" class="rounded-2xl px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap">Completed <span class="ml-1 text-xs opacity-60" x-text="'(' + getTabCount('completed') + ')'"></span></button>
+                        <button @click="activeTab = 'cancelled'" :class="activeTab === 'cancelled' ? 'bg-danger-50 text-danger-500' : 'text-content-muted hover:text-content hover:bg-surface-secondary'" class="rounded-2xl px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap">Cancelled <span class="ml-1 text-xs opacity-60" x-text="'(' + getTabCount('cancelled') + ')'"></span></button>
+                    </div>
+
+                    <!-- List view -->
+                    <div x-show="viewMode === 'list'" x-transition>
+                        <div class="rounded-3xl border border-line bg-white overflow-hidden">
+                            <div class="overflow-x-auto">
+                                <table class="w-full min-w-[700px]">
+                                    <thead>
+                                        <tr class="border-b border-line">
+                                            <th class="text-left text-xs font-medium text-content-muted uppercase tracking-wider px-6 py-4">Customer</th>
+                                            <th class="text-left text-xs font-medium text-content-muted uppercase tracking-wider px-6 py-4">Service</th>
+                                            <th class="text-left text-xs font-medium text-content-muted uppercase tracking-wider px-6 py-4">Date & Time</th>
+                                            <th class="text-left text-xs font-medium text-content-muted uppercase tracking-wider px-6 py-4">Status</th>
+                                            <th class="text-right text-xs font-medium text-content-muted uppercase tracking-wider px-6 py-4">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-line">
+                                        <template x-for="booking in filtered" :key="booking.id">
+                                            <tr class="hover:bg-surface-secondary/50 transition-colors">
+                                                <td class="px-6 py-4">
+                                                    <div class="flex items-center gap-3">
+                                                        <div :class="{
+                                                            'bg-brand-100 text-brand-700': booking.color === 'brand',
+                                                            'bg-emerald-100 text-emerald-700': booking.color === 'emerald',
+                                                            'bg-purple-100 text-purple-700': booking.color === 'purple',
+                                                            'bg-amber-100 text-amber-600': booking.color === 'amber',
+                                                            'bg-pink-100 text-pink-700': booking.color === 'pink'
+                                                        }" class="h-8 w-8 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0" x-text="booking.initials"></div>
+                                                        <div>
+                                                            <p class="text-sm font-medium text-content" x-text="booking.customer"></p>
+                                                            <p class="text-xs text-content-muted" x-text="booking.email"></p>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="px-6 py-4 text-sm text-content" x-text="booking.service"></td>
+                                                <td class="px-6 py-4">
+                                                    <p class="text-sm text-content" x-text="booking.date"></p>
+                                                    <p class="text-xs text-content-muted" x-text="booking.time + ' · ' + booking.party + ' guests'"></p>
+                                                </td>
+                                                <td class="px-6 py-4">
+                                                    <span x-show="booking.status === 'Confirmed'" class="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700">Confirmed</span>
+                                                    <span x-show="booking.status === 'Pending'" class="inline-flex items-center rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-medium text-amber-600">Pending</span>
+                                                    <span x-show="booking.status === 'Completed'" class="inline-flex items-center rounded-full bg-brand-50 px-2.5 py-0.5 text-xs font-medium text-brand-700">Completed</span>
+                                                    <span x-show="booking.status === 'Cancelled'" class="inline-flex items-center rounded-full bg-danger-50 px-2.5 py-0.5 text-xs font-medium text-danger-500">Cancelled</span>
+                                                </td>
+                                                <td class="px-6 py-4 text-right">
+                                                    <div x-show="booking.status === 'Pending'" class="flex items-center justify-end gap-1.5">
+                                                        <button class="inline-flex items-center gap-1 rounded-xl bg-emerald-500 px-3 py-1.5 text-xs font-medium text-white hover:bg-emerald-600 transition-colors">
+                                                            <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                                                            Accept
+                                                        </button>
+                                                        <button class="inline-flex items-center gap-1 rounded-xl border border-line px-3 py-1.5 text-xs font-medium text-content-muted hover:text-danger-500 hover:border-danger-200 hover:bg-danger-50 transition-colors">
+                                                            <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                                                            Reject
+                                                        </button>
+                                                        <button class="inline-flex items-center gap-1 rounded-xl border border-line px-3 py-1.5 text-xs font-medium text-content-muted hover:text-content hover:bg-surface-secondary transition-colors">
+                                                            <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/></svg>
+                                                            Reschedule
+                                                        </button>
+                                                    </div>
+                                                    <div x-show="booking.status !== 'Pending'" class="flex items-center justify-end gap-1.5">
+                                                        <button class="text-xs font-medium text-brand-600 hover:text-brand-700">View</button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Calendar view -->
+                    <div x-show="viewMode === 'calendar'" x-transition>
+                        <div class="rounded-3xl border border-line bg-white p-6">
+                            <div class="flex items-center justify-between mb-6">
+                                <h2 class="text-base font-semibold text-content">July 2026</h2>
+                                <div class="flex items-center gap-2">
+                                    <button class="p-2 rounded-xl hover:bg-surface-secondary transition-colors">
+                                        <svg class="h-4 w-4 text-content-muted" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
+                                    </button>
+                                    <button class="px-3 py-1.5 rounded-xl text-xs font-medium text-brand-600 hover:bg-brand-50 transition-colors">Today</button>
+                                    <button class="p-2 rounded-xl hover:bg-surface-secondary transition-colors">
+                                        <svg class="h-4 w-4 text-content-muted" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-7 gap-px bg-line rounded-2xl overflow-hidden">
+                                <div class="bg-surface-secondary px-3 py-2 text-xs font-medium text-content-muted text-center">Sun</div>
+                                <div class="bg-surface-secondary px-3 py-2 text-xs font-medium text-content-muted text-center">Mon</div>
+                                <div class="bg-surface-secondary px-3 py-2 text-xs font-medium text-content-muted text-center">Tue</div>
+                                <div class="bg-surface-secondary px-3 py-2 text-xs font-medium text-content-muted text-center">Wed</div>
+                                <div class="bg-surface-secondary px-3 py-2 text-xs font-medium text-content-muted text-center">Thu</div>
+                                <div class="bg-surface-secondary px-3 py-2 text-xs font-medium text-content-muted text-center">Fri</div>
+                                <div class="bg-surface-secondary px-3 py-2 text-xs font-medium text-content-muted text-center">Sat</div>
+
+                                <!-- Week 1 -->
+                                <div class="bg-white p-2 min-h-[80px] opacity-40"><span class="text-xs text-content-muted">28</span></div>
+                                <div class="bg-white p-2 min-h-[80px] opacity-40"><span class="text-xs text-content-muted">29</span></div>
+                                <div class="bg-white p-2 min-h-[80px] opacity-40"><span class="text-xs text-content-muted">30</span></div>
+                                <div class="bg-white p-2 min-h-[80px] opacity-40"><span class="text-xs text-content-muted">1</span></div>
+                                <div class="bg-white p-2 min-h-[80px] opacity-40"><span class="text-xs text-content-muted">2</span></div>
+                                <div class="bg-white p-2 min-h-[80px] opacity-40"><span class="text-xs text-content-muted">3</span></div>
+                                <div class="bg-white p-2 min-h-[80px] opacity-40"><span class="text-xs text-content-muted">4</span></div>
+
+                                <!-- Week 2 -->
+                                <div class="bg-white p-2 min-h-[80px] opacity-40"><span class="text-xs text-content-muted">5</span></div>
+                                <div class="bg-white p-2 min-h-[80px] opacity-40"><span class="text-xs text-content-muted">6</span></div>
+                                <div class="bg-white p-2 min-h-[80px] opacity-40"><span class="text-xs text-content-muted">7</span></div>
+                                <div class="bg-white p-2 min-h-[80px] opacity-40"><span class="text-xs text-content-muted">8</span></div>
+                                <div class="bg-white p-2 min-h-[80px]">
+                                    <span class="text-xs text-content-muted">9</span>
+                                </div>
+                                <div class="bg-white p-2 min-h-[80px]">
+                                    <span class="text-xs text-content-muted">10</span>
+                                    <div class="mt-1 rounded-lg bg-brand-100 px-1.5 py-0.5 text-[10px] font-medium text-brand-700 truncate">MT - Sushi Bar</div>
+                                </div>
+                                <div class="bg-white p-2 min-h-[80px] opacity-40"><span class="text-xs text-content-muted">11</span></div>
+
+                                <!-- Week 3 (current) -->
+                                <div class="bg-white p-2 min-h-[80px] opacity-40"><span class="text-xs text-content-muted">12</span></div>
+                                <div class="bg-white p-2 min-h-[80px] bg-brand-50">
+                                    <span class="text-xs font-semibold text-brand-700">12</span>
+                                    <div class="mt-1 rounded-lg bg-emerald-100 px-1.5 py-0.5 text-[10px] font-medium text-emerald-700 truncate">RD - Private</div>
+                                    <div class="mt-0.5 rounded-lg bg-amber-100 px-1.5 py-0.5 text-[10px] font-medium text-amber-600 truncate">JC - Omakase</div>
+                                </div>
+                                <div class="bg-white p-2 min-h-[80px]">
+                                    <span class="text-xs font-semibold text-content">13</span>
+                                    <div class="mt-1 rounded-lg bg-emerald-100 px-1.5 py-0.5 text-[10px] font-medium text-emerald-700 truncate">LP - Private</div>
+                                </div>
+                                <div class="bg-white p-2 min-h-[80px]"><span class="text-xs text-content-muted">14</span></div>
+                                <div class="bg-white p-2 min-h-[80px]"><span class="text-xs text-content-muted">15</span></div>
+                                <div class="bg-white p-2 min-h-[80px]"><span class="text-xs text-content-muted">16</span></div>
+                                <div class="bg-white p-2 min-h-[80px]"><span class="text-xs text-content-muted">17</span></div>
+
+                                <!-- Week 4 -->
+                                <div class="bg-white p-2 min-h-[80px]"><span class="text-xs text-content-muted">18</span></div>
+                                <div class="bg-white p-2 min-h-[80px]"><span class="text-xs text-content-muted">19</span></div>
+                                <div class="bg-white p-2 min-h-[80px]"><span class="text-xs text-content-muted">20</span></div>
+                                <div class="bg-white p-2 min-h-[80px]"><span class="text-xs text-content-muted">21</span></div>
+                                <div class="bg-white p-2 min-h-[80px]"><span class="text-xs text-content-muted">22</span></div>
+                                <div class="bg-white p-2 min-h-[80px]"><span class="text-xs text-content-muted">23</span></div>
+                                <div class="bg-white p-2 min-h-[80px]"><span class="text-xs text-content-muted">24</span></div>
+
+                                <!-- Week 5 -->
+                                <div class="bg-white p-2 min-h-[80px]"><span class="text-xs text-content-muted">25</span></div>
+                                <div class="bg-white p-2 min-h-[80px]"><span class="text-xs text-content-muted">26</span></div>
+                                <div class="bg-white p-2 min-h-[80px]"><span class="text-xs text-content-muted">27</span></div>
+                                <div class="bg-white p-2 min-h-[80px]"><span class="text-xs text-content-muted">28</span></div>
+                                <div class="bg-white p-2 min-h-[80px]"><span class="text-xs text-content-muted">29</span></div>
+                                <div class="bg-white p-2 min-h-[80px]"><span class="text-xs text-content-muted">30</span></div>
+                                <div class="bg-white p-2 min-h-[80px]"><span class="text-xs text-content-muted">31</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Empty state -->
+                    <div x-show="filtered.length === 0 && viewMode === 'list'" x-cloak class="text-center py-12">
+                        <svg class="mx-auto h-12 w-12 text-content-muted/30" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/></svg>
+                        <p class="mt-3 text-sm text-content-muted">No bookings found for this filter.</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+</body>
+</html>

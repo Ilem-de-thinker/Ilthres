@@ -13,11 +13,15 @@ class ProductList extends Component
     use WithPagination;
 
     public ?int $selectedBusinessId = null;
+
     public ?Business $business = null;
 
     public string $search = '';
+
     public ?string $statusFilter = null;
+
     public ?int $deleteId = null;
+
     public bool $showDeleteConfirm = false;
 
     protected $queryString = [
@@ -48,6 +52,7 @@ class ProductList extends Component
         if (! $value) {
             $this->business = null;
             $this->selectedBusinessId = null;
+
             return;
         }
 
@@ -94,7 +99,7 @@ class ProductList extends Component
             if ($this->search) {
                 $query->where(function ($q) {
                     $q->where('name', 'like', "%{$this->search}%")
-                      ->orWhere('description', 'like', "%{$this->search}%");
+                        ->orWhere('description', 'like', "%{$this->search}%");
                 });
             }
 

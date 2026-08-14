@@ -40,7 +40,7 @@ class GenerateReport
         $raw = AnalyticsEvent::where('business_id', $business->id)
             ->where('type', AnalyticsEvent::TYPE_PAGE_VIEW)
             ->where('created_at', '>=', $since)
-            ->selectRaw("DATE(created_at) as date, COUNT(*) as count")
+            ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
             ->groupBy('date')
             ->orderBy('date')
             ->pluck('count', 'date')

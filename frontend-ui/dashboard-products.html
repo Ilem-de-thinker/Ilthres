@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products — OmniBusiness</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+                    colors: {
+                        brand: { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' },
+                        emerald: { 50: '#ecfdf5', 100: '#d1fae5', 500: '#10b981', 600: '#059669' },
+                        amber: { 50: '#fffbeb', 500: '#f59e0b' },
+                        danger: { 50: '#fef2f2', 500: '#ef4444' },
+                        surface: { DEFAULT: '#ffffff', secondary: '#f8fafc' },
+                        content: { DEFAULT: '#111827', muted: '#6b7280' },
+                        line: { DEFAULT: '#e5e7eb' },
+                    },
+                },
+            },
+        }
+    </script>
+    <style>[x-cloak] { display: none !important; }</style>
+</head>
+<body class="bg-surface-secondary text-content antialiased font-sans">
+
+    <div class="flex h-screen overflow-hidden" x-data="{ sidebarOpen: true, mobileSidebar: false, selected: [], search: '', activeTab: 'all',
+        products: [
+            { id: 1, name: 'Dragon Roll', price: 18.99, inventory: 24, status: 'Active', image: 'dragon-roll', category: 'active' },
+            { id: 2, name: 'Sashimi Platter', price: 34.99, inventory: 12, status: 'Active', image: 'sashimi', category: 'active' },
+            { id: 3, name: 'Tonkotsu Ramen', price: 16.99, inventory: 0, status: 'Out of Stock', image: 'ramen', category: 'out' },
+            { id: 4, name: 'Edamame', price: 6.99, inventory: 48, status: 'Active', image: 'edamame', category: 'active' },
+            { id: 5, name: 'Tempura Udon', price: 15.99, inventory: 3, status: 'Draft', image: 'udon', category: 'draft' },
+            { id: 6, name: 'Mochi Ice Cream', price: 8.99, inventory: 32, status: 'Active', image: 'mochi', category: 'active' },
+        ],
+        get filtered() {
+            let list = this.products;
+            if (this.activeTab !== 'all') list = list.filter(p => p.category === this.activeTab);
+            if (this.search) list = list.filter(p => p.name.toLowerCase().includes(this.search.toLowerCase()));
+            return list;
+        },
+        toggleSelect(id) {
+            this.selected.includes(id) ? this.selected = this.selected.filter(i => i !== id) : this.selected.push(id);
+        },
+        toggleAll() {
+            if (this.selected.length === this.filtered.length) { this.selected = []; } else { this.selected = this.filtered.map(p => p.id); }
+        },
+        removeSelected() { this.products = this.products.filter(p => !this.selected.includes(p.id)); this.selected = []; }
+    }">
+
+        <!-- Sidebar -->
+        <aside :class="sidebarOpen ? 'lg:w-64' : 'lg:w-20'" class="hidden lg:flex lg:flex-col bg-white border-r border-line flex-shrink-0 transition-all duration-300">
+            <div class="flex items-center justify-between h-16 px-4 border-b border-line">
+                <a href="index.html" class="flex items-center gap-2.5">
+                    <div class="flex h-9 w-9 items-center justify-center rounded-2xl bg-brand-600 text-white flex-shrink-0">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016A3.001 3.001 0 0021 9.349m-18 0V6a2.25 2.25 0 012.25-2.25h15A2.25 2.25 0 0121 6v3.349"/></svg>
+                    </div>
+                    <span x-show="sidebarOpen" x-cloak class="text-base font-semibold text-content whitespace-nowrap">OmniBusiness</span>
+                </a>
+            </div>
+            <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+                <a href="dashboard.html" class="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium text-content-muted hover:text-content hover:bg-surface-secondary transition-colors">
+                    <svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
+                    <span x-show="sidebarOpen" x-cloak>Dashboard</span>
+                </a>
+                <a href="dashboard-products.html" class="flex items-center gap-3 rounded-2xl bg-brand-50 px-3 py-2.5 text-sm font-medium text-brand-700">
+                    <svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/></svg>
+                    <span x-show="sidebarOpen" x-cloak>Products</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium text-content-muted hover:text-content hover:bg-surface-secondary transition-colors">
+                    <svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/></svg>
+                    <span x-show="sidebarOpen" x-cloak>Customers</span>
+                </a>
+                <a href="dashboard-bookings.html" class="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium text-content-muted hover:text-content hover:bg-surface-secondary transition-colors">
+                    <svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/></svg>
+                    <span x-show="sidebarOpen" x-cloak>Bookings</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium text-content-muted hover:text-content hover:bg-surface-secondary transition-colors">
+                    <svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155"/></svg>
+                    <span x-show="sidebarOpen" x-cloak>Messages</span>
+                    <span x-show="sidebarOpen" x-cloak class="ml-auto rounded-full bg-danger-500 px-2 py-0.5 text-xs font-medium text-white">3</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium text-content-muted hover:text-content hover:bg-surface-secondary transition-colors">
+                    <svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/></svg>
+                    <span x-show="sidebarOpen" x-cloak>Reviews</span>
+                </a>
+                <div class="pt-2" x-show="sidebarOpen" x-cloak><div class="h-px bg-line mx-2"></div></div>
+                <a href="#" class="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium text-content-muted hover:text-content hover:bg-surface-secondary transition-colors">
+                    <svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42"/></svg>
+                    <span x-show="sidebarOpen" x-cloak>Website</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium text-content-muted hover:text-content hover:bg-surface-secondary transition-colors">
+                    <svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg>
+                    <span x-show="sidebarOpen" x-cloak>Analytics</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium text-content-muted hover:text-content hover:bg-surface-secondary transition-colors">
+                    <svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 110-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.461a20.845 20.845 0 01-1.44-4.282m3.102.069a18.03 18.03 0 01-.59-4.59c0-1.586.205-3.124.59-4.59m0 9.18a23.848 23.848 0 018.835 2.535M10.34 6.66a23.847 23.847 0 008.835-2.535m0 0A23.74 23.74 0 0018.795 3m.38 1.125a23.91 23.91 0 011.014 5.395m-1.014 8.855c-.118.38-.245.754-.38 1.125m.38-1.125a23.91 23.91 0 001.014-5.395m0-3.46c.495.413.811 1.035.811 1.73 0 .695-.316 1.317-.811 1.73m0-3.46a24.347 24.347 0 010 3.46"/></svg>
+                    <span x-show="sidebarOpen" x-cloak>Marketing</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium text-content-muted hover:text-content hover:bg-surface-secondary transition-colors">
+                    <svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    <span x-show="sidebarOpen" x-cloak>Settings</span>
+                </a>
+            </nav>
+            <div class="border-t border-line p-3">
+                <button @click="sidebarOpen = !sidebarOpen" class="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium text-content-muted hover:text-content hover:bg-surface-secondary transition-colors w-full">
+                    <svg :class="sidebarOpen ? '' : 'rotate-180'" class="h-5 w-5 flex-shrink-0 transition-transform" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5"/></svg>
+                    <span x-show="sidebarOpen" x-cloak>Collapse</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Mobile sidebar overlay -->
+        <div x-show="mobileSidebar" x-cloak x-transition:enter="transition-opacity ease-linear duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity ease-linear duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="mobileSidebar = false" class="fixed inset-0 z-40 bg-black/40 lg:hidden"></div>
+
+        <!-- Main content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Top nav -->
+            <header class="h-16 bg-white border-b border-line flex items-center justify-between px-4 lg:px-6 flex-shrink-0">
+                <div class="flex items-center gap-3">
+                    <button @click="mobileSidebar = true" class="lg:hidden p-2 rounded-xl hover:bg-surface-secondary transition-colors">
+                        <svg class="h-5 w-5 text-content-muted" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
+                    </button>
+                    <div class="hidden sm:flex items-center rounded-2xl border border-line bg-surface-secondary px-4 py-2 focus-within:border-brand-400 focus-within:bg-white transition-all w-72">
+                        <svg class="h-4 w-4 text-content-muted flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
+                        <input type="text" placeholder="Search..." class="flex-1 bg-transparent px-3 text-sm outline-none placeholder:text-content-muted/60">
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button class="relative p-2 rounded-xl hover:bg-surface-secondary transition-colors">
+                        <svg class="h-5 w-5 text-content-muted" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"/></svg>
+                        <span class="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-danger-500"></span>
+                    </button>
+                    <div class="h-8 w-8 rounded-full bg-brand-100 flex items-center justify-center text-sm font-semibold text-brand-700 cursor-pointer">SR</div>
+                </div>
+            </header>
+
+            <!-- Page content -->
+            <main class="flex-1 overflow-y-auto p-4 lg:p-8">
+                <div class="max-w-7xl mx-auto">
+                    <!-- Page header -->
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+                        <div>
+                            <h1 class="text-2xl font-bold text-content">Products</h1>
+                            <p class="mt-1 text-sm text-content-muted">Manage your menu items and track inventory.</p>
+                        </div>
+                        <button class="inline-flex items-center gap-2 rounded-2xl bg-brand-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-700 transition-colors self-start">
+                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+                            Add Product
+                        </button>
+                    </div>
+
+                    <!-- Search and filters -->
+                    <div class="mb-6 space-y-4">
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <div class="flex items-center rounded-2xl border border-line bg-white px-4 py-2 focus-within:border-brand-400 transition-all flex-1 max-w-md">
+                                <svg class="h-4 w-4 text-content-muted flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
+                                <input type="text" x-model="search" placeholder="Search products..." class="flex-1 bg-transparent px-3 text-sm outline-none placeholder:text-content-muted/60">
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <button @click="activeTab = 'all'" :class="activeTab === 'all' ? 'bg-brand-50 text-brand-700' : 'text-content-muted hover:text-content hover:bg-surface-secondary'" class="rounded-2xl px-4 py-2 text-sm font-medium transition-colors">All</button>
+                            <button @click="activeTab = 'active'" :class="activeTab === 'active' ? 'bg-brand-50 text-brand-700' : 'text-content-muted hover:text-content hover:bg-surface-secondary'" class="rounded-2xl px-4 py-2 text-sm font-medium transition-colors">Active</button>
+                            <button @click="activeTab = 'draft'" :class="activeTab === 'draft' ? 'bg-brand-50 text-brand-700' : 'text-content-muted hover:text-content hover:bg-surface-secondary'" class="rounded-2xl px-4 py-2 text-sm font-medium transition-colors">Draft</button>
+                            <button @click="activeTab = 'out'" :class="activeTab === 'out' ? 'bg-brand-50 text-brand-700' : 'text-content-muted hover:text-content hover:bg-surface-secondary'" class="rounded-2xl px-4 py-2 text-sm font-medium transition-colors">Out of Stock</button>
+                        </div>
+                    </div>
+
+                    <!-- Bulk action bar -->
+                    <div x-show="selected.length > 0" x-cloak x-transition class="mb-4 rounded-2xl border border-brand-200 bg-brand-50 px-4 py-3 flex items-center justify-between">
+                        <p class="text-sm font-medium text-brand-700"><span x-text="selected.length"></span> product<span x-text="selected.length > 1 ? 's' : ''"></span> selected</p>
+                        <button @click="removeSelected()" class="inline-flex items-center gap-1.5 rounded-xl bg-danger-500 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-600 transition-colors">
+                            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
+                            Delete
+                        </button>
+                    </div>
+
+                    <!-- Product grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <template x-for="product in filtered" :key="product.id">
+                            <div class="rounded-3xl border border-line bg-white overflow-hidden hover:shadow-md transition-shadow">
+                                <div class="relative">
+                                    <div class="h-44 bg-surface-secondary flex items-center justify-center">
+                                        <svg class="h-12 w-12 text-content-muted/30" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/></svg>
+                                    </div>
+                                    <div class="absolute top-3 left-3">
+                                        <label class="inline-flex items-center gap-2 cursor-pointer">
+                                            <input type="checkbox" :checked="selected.includes(product.id)" @change="toggleSelect(product.id)" class="h-4 w-4 rounded border-line text-brand-600 focus:ring-brand-500">
+                                        </label>
+                                    </div>
+                                    <div class="absolute top-3 right-3">
+                                        <span x-show="product.status === 'Active'" class="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700">Active</span>
+                                        <span x-show="product.status === 'Draft'" class="inline-flex items-center rounded-full bg-surface-secondary px-2.5 py-0.5 text-xs font-medium text-content-muted">Draft</span>
+                                        <span x-show="product.status === 'Out of Stock'" class="inline-flex items-center rounded-full bg-danger-50 px-2.5 py-0.5 text-xs font-medium text-danger-500">Out of Stock</span>
+                                    </div>
+                                </div>
+                                <div class="p-4">
+                                    <div class="flex items-start justify-between">
+                                        <div>
+                                            <h3 class="text-sm font-semibold text-content" x-text="product.name"></h3>
+                                            <p class="text-lg font-bold text-content mt-1">$<span x-text="product.price.toFixed(2)"></span></p>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-xs text-content-muted">Inventory</p>
+                                            <p class="text-sm font-semibold" :class="product.inventory === 0 ? 'text-danger-500' : product.inventory <= 5 ? 'text-amber-500' : 'text-content'" x-text="product.inventory"></p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2 mt-4 pt-4 border-t border-line">
+                                        <button class="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl border border-line px-3 py-2 text-xs font-medium text-content hover:bg-surface-secondary transition-colors">
+                                            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/></svg>
+                                            Edit
+                                        </button>
+                                        <button class="inline-flex items-center justify-center rounded-xl border border-line p-2 text-content-muted hover:text-danger-500 hover:border-danger-200 hover:bg-danger-50 transition-colors">
+                                            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+
+                    <!-- Empty state -->
+                    <div x-show="filtered.length === 0" x-cloak class="text-center py-12">
+                        <svg class="mx-auto h-12 w-12 text-content-muted/30" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/></svg>
+                        <p class="mt-3 text-sm text-content-muted">No products found.</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+</body>
+</html>

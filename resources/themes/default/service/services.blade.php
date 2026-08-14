@@ -1,81 +1,44 @@
-{{--
-  Default theme · Service services — clean, structured, minimal services showcase.
---}}
-<section id="services">
-    <div class="container">
-        <h2 class="section-title">Services</h2>
-        
-        @if ($services && $services->isNotEmpty())
-            {{-- Category Filter Pills --}}
-            @php
-                $uniqueCategories = $services->pluck('category')->filter()->unique('id');
-            @endphp
-            @if ($uniqueCategories->isNotEmpty())
-                <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; margin-bottom: 3rem;" x-data="{ activeCat: 'all' }">
-                    <button @click="activeCat = 'all'; $dispatch('filter-category', { categoryId: 'all' })" 
-                            :class="activeCat === 'all' ? 'active-filter' : 'inactive-filter'"
-                            style="padding: 0.5rem 1.25rem; font-size: 0.8125rem; font-weight: 500; border: 1px solid color-mix(in srgb, var(--color-text) 12%, transparent); border-radius: var(--radius); cursor: pointer; transition: all 0.15s; background: transparent; color: var(--color-text);">
-                        All Services
-                    </button>
-                    @foreach ($uniqueCategories as $cat)
-                        <button @click="activeCat = '{{ $cat->id }}'; $dispatch('filter-category', { categoryId: '{{ $cat->id }}' })"
-                                :class="activeCat === '{{ $cat->id }}' ? 'active-filter' : 'inactive-filter'"
-                                style="padding: 0.5rem 1.25rem; font-size: 0.8125rem; font-weight: 500; border: 1px solid color-mix(in srgb, var(--color-text) 12%, transparent); border-radius: var(--radius); cursor: pointer; transition: all 0.15s; background: transparent; color: var(--color-text);">
-                            {{ $cat->name }}
-                        </button>
-                    @endforeach
-                </div>
-                
-                <style>
-                    .active-filter { background: var(--color-primary) !important; color: var(--color-background) !important; border-color: var(--color-primary) !important; }
-                    .inactive-filter:hover { background: color-mix(in srgb, var(--color-text) 4%, transparent); }
-                </style>
-            @endif
+{{-- Default theme · Service services listing — Serene Ivory --}}
+@if ($services && count($services) > 0)
+<section id="services" style="padding: 96px 0; background: #f1eee7;">
+    <div style="max-width: 1280px; margin: 0 auto; padding: 0 64px;">
+        <div style="margin-bottom: 48px;">
+            <span class="section-label" style="color: #6c5e06; display: block; margin-bottom: 12px;">WHAT WE OFFER</span>
+            <h2 style="font-family: 'Playfair Display', serif; font-style: italic; font-size: clamp(1.75rem, 3.5vw, 2.75rem); color: #1c1c18;">Our Services</h2>
+        </div>
 
-            {{-- Services List --}}
-            <div style="display: flex; flex-direction: column; border-top: 1px solid color-mix(in srgb, var(--color-text) 10%, transparent);" x-data="{ currentCategory: 'all' }" @filter-category.window="currentCategory = $event.detail.categoryId">
-                @foreach ($services->sortBy('sort_order') as $service)
-                    <div x-show="currentCategory === 'all' || currentCategory == '{{ $service->category_id ?? 0 }}'"
-                         style="background: var(--color-background); border-bottom: 1px solid color-mix(in srgb, var(--color-text) 10%, transparent); padding: 1.5rem 0; display: flex; align-items: flex-start; justify-content: space-between; gap: 2rem;">
-                        
-                        <div style="flex-grow: 1;">
-                            <span style="font-size: 0.75rem; color: color-mix(in srgb, var(--color-text) 40%, transparent); margin-bottom: 0.25rem; display: block; font-weight: 500;">
-                                {{ $service->category?->name ?? 'General' }}
-                            </span>
-                            <h3 style="font-size: 1.0625rem; font-weight: 600; margin-bottom: 0.5rem; line-height: 1.3;">
-                                <a href="{{ route('business.service', [$business, $service]) }}" style="color: var(--color-text); text-decoration: none;">
-                                    {{ $service->name }}
-                                </a>
-                            </h3>
-                            @if ($service->description)
-                                <p style="font-size: 0.875rem; color: color-mix(in srgb, var(--color-text) 60%, transparent); line-height: 1.6; max-width: 800px;">
-                                    {{ $service->description }}
-                                </p>
-                            @endif
-                        </div>
-                        
-                        <div style="text-align: right; flex-shrink: 0; display: flex; flex-direction: column; gap: 0.375rem; align-items: flex-end;">
-                            @if ($service->price)
-                                <span style="font-weight: 600; font-size: 1.0625rem; color: var(--color-text);">
-                                    {{ number_format($service->price, 2) }}
-                                </span>
-                            @endif
-                            @if ($service->duration_minutes)
-                                <span style="font-size: 0.75rem; color: color-mix(in srgb, var(--color-text) 40%, transparent); font-weight: 500;">
-                                    {{ $service->duration_minutes }} mins
-                                </span>
-                            @endif
-                            <a href="{{ route('business.service', [$business, $service]) }}" style="font-size: 0.8125rem; font-weight: 500; color: var(--color-primary); text-decoration: none; margin-top: 0.5rem;">
-                                View Service &rarr;
-                            </a>
-                        </div>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px;">
+            @foreach ($services as $i => $service)
+            <a href="{{ route('business.service', [$business, $service]) }}" class="subtle-shadow" style="display: block; background: #fcf9f2; border-radius: 0.5rem; overflow: hidden; transition: transform 0.2s; text-decoration: none;"
+               onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+                @if($service->image)
+                <div style="overflow: hidden;">
+                    <img src="{{ Storage::url($service->image) }}" alt="{{ $service->name }}" style="width: 100%; height: 220px; object-fit: cover; transition: transform 0.5s; display: block;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+                </div>
+                @endif
+                <div style="padding: 28px;">
+                    <span class="section-label" style="color: #757873; margin-bottom: 12px; display: block;">{{ str_pad($i + 1, 2, '0', STR_PAD_LEFT) }}</span>
+                    <h3 style="font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.125rem; color: #1c1c18; margin-bottom: 10px;">{{ $service->name }}</h3>
+                    @if($service->description)
+                    <p style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.8125rem; line-height: 1.7; color: #454843;">{{ \Illuminate\Support\Str::limit(strip_tags($service->description), 120) }}</p>
+                    @endif
+                    @if($service->price)
+                    <div style="margin-top: 20px; padding-top: 16px; border-top: 0.5px solid #E5E0D5;">
+                        <span class="section-label" style="color: #757873; display: block; margin-bottom: 4px;">FROM</span>
+                        <span style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.125rem; font-weight: 600; color: #6c5e06;">{{ \App\Support\Money\Money::format($service->price, $business->currency_code) }}</span>
                     </div>
-                @endforeach
-            </div>
-        @else
-            <div style="text-align: center; padding: 4rem 0; color: color-mix(in srgb, var(--color-text) 40%, transparent);">
-                <p>No services listed yet.</p>
-            </div>
-        @endif
+                    @endif
+                </div>
+            </a>
+            @endforeach
+        </div>
     </div>
 </section>
+@else
+<section id="services" style="padding: 96px 0; background: #f1eee7;">
+    <div style="max-width: 1280px; margin: 0 auto; padding: 0 64px; text-align: center; padding-top: 48px; padding-bottom: 48px;">
+        <span class="material-symbols-outlined" style="color: #c5c7c1; font-size: 48px; display: block; margin-bottom: 16px;">design_services</span>
+        <p style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.875rem; color: #757873;">No services listed yet.</p>
+    </div>
+</section>
+@endif

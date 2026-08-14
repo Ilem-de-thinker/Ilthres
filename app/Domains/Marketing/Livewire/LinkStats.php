@@ -4,8 +4,9 @@ namespace App\Domains\Marketing\Livewire;
 
 use App\Models\Business;
 use App\Models\MarketingLink;
+use Livewire\Component;
 
-class LinkStats extends \Livewire\Component
+class LinkStats extends Component
 {
     public ?Business $business = null;
 

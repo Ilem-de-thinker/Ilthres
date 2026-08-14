@@ -2,11 +2,27 @@
   Subscription status card — shows current plan, usage summary, upgrade/downgrade links.
 --}}
 <div>
+    @php
+        $pricingEnabled = \App\Models\PlatformSetting::get('pricing_enabled', true);
+    @endphp
+
     @if (! $hasBusiness)
         <div class="rounded-lg border border-dashed border-gray-300 bg-white p-12 text-center">
             <p class="text-sm text-gray-500">Create a business to see subscription details.</p>
         </div>
     @else
+        @if (! $pricingEnabled)
+            <div class="mb-4 rounded-lg border border-green-200 bg-green-50 p-4">
+                <div class="flex items-center gap-3">
+                    <svg class="h-5 w-5 shrink-0 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <div>
+                        <p class="text-sm font-medium text-green-700">Pricing is temporarily disabled</p>
+                        <p class="text-xs text-green-600">All features are currently free. No payment required right now.</p>
+                    </div>
+                </div>
+            </div>
+        @endif
+
         <div class="rounded-lg border border-gray-200 bg-white p-6">
             <div class="flex items-center justify-between">
                 <div>
@@ -48,7 +64,7 @@
                 </div>
             @endif
 
-            @if ($plan)
+            @if ($plan && $pricingEnabled && ! ($isLinkedBusiness ?? false))
                 <div class="mt-6 flex flex-wrap gap-3">
                     @if ($upgradePlan)
                         <a href="{{ route('dashboard.pricing') }}" class="rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800">Upgrade to {{ $upgradePlan->name }}</a>
@@ -57,7 +73,16 @@
                         <a href="{{ route('dashboard.pricing') }}" class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-50">Downgrade</a>
                     @endif
                 </div>
-            @else
+            @elseif ($isLinkedBusiness ?? false)
+                <div class="mt-6">
+                    <p class="text-xs text-gray-400">Linked businesses cannot change plans from here.</p>
+                    <a href="{{ route('dashboard') }}" class="mt-2 inline-block rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800">Go to dashboard</a>
+                </div>
+            @elseif (! $pricingEnabled && $plan)
+                <div class="mt-6">
+                    <a href="{{ route('dashboard') }}" class="rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800">Go to dashboard</a>
+                </div>
+            @elseif (! $plan)
                 <div class="mt-6">
                     <a href="{{ route('dashboard.pricing') }}" class="rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800">Choose a plan</a>
                 </div>

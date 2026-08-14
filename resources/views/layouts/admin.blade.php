@@ -36,6 +36,10 @@
                     class="rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs('admin.dashboard') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-100' }}">
                     Dashboard
                 </a>
+                <a href="{{ route('admin.analytics') }}"
+                    class="rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs('admin.analytics') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-100' }}">
+                    Analytics
+                </a>
                 <a href="{{ route('admin.users') }}"
                     class="rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs('admin.users') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-100' }}">
                     Users
@@ -43,6 +47,10 @@
                 <a href="{{ route('admin.businesses') }}"
                     class="rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs('admin.businesses') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-100' }}">
                     Businesses
+                </a>
+                <a href="{{ route('admin.orders') }}"
+                    class="rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs('admin.orders') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-100' }}">
+                    Orders
                 </a>
                 <a href="{{ route('admin.payments') }}"
                     class="rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs('admin.payments') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-100' }}">
@@ -59,6 +67,18 @@
                 <a href="{{ route('admin.categories') }}"
                     class="rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs('admin.categories') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-100' }}">
                     Categories
+                </a>
+                <a href="{{ route('admin.verifications') }}"
+                    class="rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs('admin.verifications') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-100' }}">
+                    Verifications
+                </a>
+                <a href="{{ route('admin.settings') }}"
+                    class="rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs('admin.settings*') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-100' }}">
+                    Settings
+                </a>
+                <a href="{{ route('admin.settings.ai') }}"
+                    class="rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs('admin.settings.ai') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-100' }}">
+                    AI Settings
                 </a>
             </div>
         </nav>

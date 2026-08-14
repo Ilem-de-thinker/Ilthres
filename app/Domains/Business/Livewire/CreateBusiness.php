@@ -21,20 +21,30 @@ class CreateBusiness extends Component
     use WithFileUploads;
 
     public string $name = '';
+
     public string $description = '';
+
     public ?int $categoryId = null;
+
     public string $type = 'product_store';
 
     // Theme selection.
     public ?int $themeId = null;
+
     public string $themePrimary = '#4F46E5';
+
     public string $themeSecondary = '#10B981';
+
     public string $themeBackground = '#FFFFFF';
+
     public string $themeText = '#111827';
+
     public string $themeAccent = '#F59E0B';
 
     public $logo = null;
+
     public ?string $successMessage = null;
+
     public ?string $errorMessage = null;
 
     protected function rules(): array
@@ -112,6 +122,8 @@ class CreateBusiness extends Component
                 logo: $logoPath,
                 cover: null,
             ));
+
+            dd($business);
 
             // Attach the selected theme with customization.
             $business->themes()->attach($this->themeId, [

@@ -53,4 +53,26 @@ class User extends Authenticatable
     {
         return $this->hasMany(Business::class);
     }
+
+    /**
+     * Check if the user can leave a review for a given business.
+     */
+    public function canReview(Business $business): bool
+    {
+        $hasCompletedOrder = Order::where('business_id', $business->id)
+            ->where('user_id', $this->id)
+            ->where('status', 'completed')
+            ->exists();
+
+        $hasCompletedBooking = Booking::where('business_id', $business->id)
+            ->where('user_id', $this->id)
+            ->where('status', 'completed')
+            ->exists();
+
+        $alreadyReviewed = Review::where('business_id', $business->id)
+            ->where('user_id', $this->id)
+            ->exists();
+
+        return ($hasCompletedOrder || $hasCompletedBooking) && ! $alreadyReviewed;
+    }
 }

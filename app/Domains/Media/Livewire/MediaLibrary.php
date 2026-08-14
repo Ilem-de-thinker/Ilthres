@@ -20,14 +20,21 @@ class MediaLibrary extends Component
     use WithPagination;
 
     public ?int $selectedBusinessId = null;
+
     public ?Business $business = null;
 
     public ?string $collectionFilter = null;
+
     public string $search = '';
+
     public ?int $deleteId = null;
+
     public bool $showDeleteConfirm = false;
+
     public ?int $expandedId = null;
+
     public ?Media $expandedMedia = null;
+
     public bool $showExpanded = false;
 
     protected $queryString = [
@@ -137,7 +144,7 @@ class MediaLibrary extends Component
             if ($this->search) {
                 $query->where(function ($q) {
                     $q->where('original_name', 'like', "%{$this->search}%")
-                      ->orWhere('collection', 'like', "%{$this->search}%");
+                        ->orWhere('collection', 'like', "%{$this->search}%");
                 });
             }
 

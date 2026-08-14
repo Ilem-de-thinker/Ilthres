@@ -123,4 +123,17 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Base Domain
+    |--------------------------------------------------------------------------
+    |
+    | The base domain used for subdomain-based website resolution. Each
+    | business website gets a subdomain under this domain (e.g.,
+    | "my-shop.example.com"). Custom domains override this.
+    |
+    */
+
+    'base_domain' => env('BASE_DOMAIN', 'localhost'),
+
 ];

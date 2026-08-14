@@ -15,6 +15,7 @@ use Livewire\Component;
 class ForgotPassword extends Component
 {
     public string $email = '';
+
     public ?string $status = null;
 
     protected function rules(): array
@@ -35,7 +36,7 @@ class ForgotPassword extends Component
     {
         $this->validate();
 
-        $throttleKey = 'password-reset:' . strtolower($this->email) . '|' . request()->ip();
+        $throttleKey = 'password-reset:'.strtolower($this->email).'|'.request()->ip();
 
         if ($limiter->tooManyAttempts($throttleKey, 3)) {
             $seconds = $limiter->availableIn($throttleKey);

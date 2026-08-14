@@ -2,24 +2,26 @@
 
 namespace App\Domains\Marketing\Livewire;
 
-use App\Domains\Marketing\Actions\CreateLeadForm;
 use App\Domains\Marketing\Actions\DeleteLeadForm;
 use App\Models\Business;
 use App\Models\LeadForm;
-use App\Models\LeadFormField;
 use Livewire\Component;
 
 class LeadFormList extends Component
 {
     public ?Business $business = null;
+
     public ?int $deleteId = null;
+
     public bool $showDeleteConfirm = false;
 
     public function mount(): void
     {
         $user = auth()->user();
         $businesses = $user->businesses;
-        if ($businesses->isEmpty()) { return; }
+        if ($businesses->isEmpty()) {
+            return;
+        }
         $defaultId = session('current_business_id', $businesses->first()->id);
         $this->business = $businesses->find($defaultId) ?? $businesses->first();
     }

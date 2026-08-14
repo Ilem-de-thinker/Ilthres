@@ -8,6 +8,7 @@ use App\Domains\Product\DTOs\ProductData;
 use App\Models\Business;
 use App\Models\Media;
 use App\Models\Product;
+use App\Models\PromoBanner;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -19,18 +20,31 @@ class ProductCreate extends Component
     public ?Business $business = null;
 
     public string $name = '';
+
     public ?string $description = null;
+
     public ?float $price = null;
+
     public ?float $comparePrice = null;
+
     public string $currency = 'NGN';
+
     public bool $isActive = true;
+
     public bool $isFeatured = false;
+
     public int $sortOrder = 0;
+
     public array $images = [];
+
     public array $variants = [];
 
+    public array $selectedBanners = [];
+
     public bool $showMediaPicker = false;
+
     public array $pendingImages = [];
+
     public $mediaUpload = null;
 
     protected function rules(): array
@@ -69,7 +83,7 @@ class ProductCreate extends Component
             businessId: $this->business->id,
             categoryId: null,
             name: $this->name,
-            slug: Str::slug($this->name) . '-' . Str::random(4),
+            slug: Str::slug($this->name).'-'.Str::random(4),
             description: $this->description,
             price: (float) $this->price,
             comparePrice: $this->comparePrice ? (float) $this->comparePrice : null,
@@ -83,6 +97,10 @@ class ProductCreate extends Component
 
         $this->authorize('create', Product::class);
         $product = $action($data);
+
+        if ($product && count($this->selectedBanners)) {
+            $product->banners()->sync($this->selectedBanners);
+        }
 
         $this->redirect(route('dashboard.products.show', $product), navigate: true);
     }
@@ -128,7 +146,9 @@ class ProductCreate extends Component
     public function uploadMedia(UploadMediaAction $uploadMedia): void
     {
         $this->validateOnly('mediaUpload');
-        if (! $this->mediaUpload) return;
+        if (! $this->mediaUpload) {
+            return;
+        }
 
         try {
             $media = $uploadMedia($this->business, $this->mediaUpload, 'product-images');
@@ -172,7 +192,10 @@ class ProductCreate extends Component
 
     public function getMediaItemsProperty()
     {
-        if (! $this->business) return collect();
+        if (! $this->business) {
+            return collect();
+        }
+
         return Media::where('business_id', $this->business->id)
             ->where('mime_type', 'like', 'image/%')
             ->orderBy('created_at', 'desc')->get();
@@ -180,6 +203,17 @@ class ProductCreate extends Component
 
     public function render()
     {
-        return view('livewire.product.product-create', ['mediaItems' => $this->mediaItems]);
+        $heroBanners = $this->business
+            ? PromoBanner::where('business_id', $this->business->id)
+                ->hero()
+                ->active()
+                ->ordered()
+                ->get()
+            : collect();
+
+        return view('livewire.product.product-create', [
+            'mediaItems' => $this->mediaItems,
+            'heroBanners' => $heroBanners,
+        ]);
     }
 }

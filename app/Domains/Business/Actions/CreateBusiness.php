@@ -33,6 +33,7 @@ class CreateBusiness
             'longitude' => $data->longitude,
             'logo' => $data->logo,
             'cover' => $data->cover,
+            'website_url' => $data->websiteUrl,
             'is_active' => true,
             'is_discoverable' => $data->isDiscoverable,
             'is_verified' => false,
@@ -49,7 +50,7 @@ class CreateBusiness
         $suffix = 1;
 
         while (Business::where('slug', $slug)->exists()) {
-            $slug = $original . '-' . $suffix++;
+            $slug = $original.'-'.$suffix++;
         }
 
         return $slug;

@@ -8,7 +8,7 @@
         <span class="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-medium text-blue-700">Preview mode</span>
     </div>
     <div class="aspect-[4/3] w-full bg-gray-100">
-        <iframe src="{{ route('business.profile', $business) }}?theme_preview={{ $theme->id }}"
+        <iframe src="{{ route('business.site', $business) }}?theme_preview={{ $theme->id }}"
             class="h-full w-full" frameborder="0"></iframe>
     </div>
 </div>

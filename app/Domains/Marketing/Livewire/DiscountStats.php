@@ -14,7 +14,9 @@ class DiscountStats extends Component
     {
         $user = auth()->user();
         $businesses = $user->businesses;
-        if ($businesses->isEmpty()) { return; }
+        if ($businesses->isEmpty()) {
+            return;
+        }
         $defaultId = session('current_business_id', $businesses->first()->id);
         $this->business = $businesses->find($defaultId) ?? $businesses->first();
     }

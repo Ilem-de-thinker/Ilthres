@@ -14,15 +14,20 @@ class LeadFormSubmissions extends Component
     use WithPagination;
 
     public ?Business $business = null;
+
     public ?int $formFilter = null;
+
     public string $statusFilter = '';
+
     public ?int $detailId = null;
 
     public function mount(): void
     {
         $user = auth()->user();
         $businesses = $user->businesses;
-        if ($businesses->isEmpty()) { return; }
+        if ($businesses->isEmpty()) {
+            return;
+        }
         $defaultId = session('current_business_id', $businesses->first()->id);
         $this->business = $businesses->find($defaultId) ?? $businesses->first();
     }

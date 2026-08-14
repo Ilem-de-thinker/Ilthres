@@ -36,7 +36,7 @@ class ReviewReceived extends Notification
     {
         return [
             'title' => "New {$this->rating}-star review",
-            'body' => "{$this->reviewerName} reviewed {$this->business->name}." . ($this->comment ? " \"{$this->comment}\"" : ''),
+            'body' => "{$this->reviewerName} reviewed {$this->business->name}.".($this->comment ? " \"{$this->comment}\"" : ''),
             'business_id' => $this->business->id,
         ];
     }

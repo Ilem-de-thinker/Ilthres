@@ -12,7 +12,9 @@ class PromotionList extends Component
     use WithPagination;
 
     public ?Business $business = null;
+
     public ?int $deleteId = null;
+
     public bool $showDeleteConfirm = false;
 
     public function mount(): void

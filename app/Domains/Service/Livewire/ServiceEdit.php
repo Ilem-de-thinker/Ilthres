@@ -15,19 +15,29 @@ class ServiceEdit extends Component
     use WithFileUploads;
 
     public ?int $serviceId = null;
+
     public ?Service $service = null;
 
     public string $name = '';
+
     public ?string $description = null;
+
     public ?float $price = null;
+
     public string $currency = 'NGN';
+
     public ?int $durationMinutes = null;
+
     public bool $isActive = true;
+
     public int $sortOrder = 0;
+
     public array $images = [];
 
     public bool $showMediaPicker = false;
+
     public array $pendingImages = [];
+
     public $mediaUpload = null;
 
     protected function rules(): array
@@ -132,7 +142,9 @@ class ServiceEdit extends Component
     public function uploadMedia(UploadMediaAction $uploadMedia): void
     {
         $this->validateOnly('mediaUpload');
-        if (! $this->mediaUpload) return;
+        if (! $this->mediaUpload) {
+            return;
+        }
 
         try {
             $media = $uploadMedia($this->service->business, $this->mediaUpload, 'service-images');

@@ -9,12 +9,19 @@ use Livewire\Component;
 class CreateDiscount extends Component
 {
     public ?Business $business = null;
+
     public string $code = '';
+
     public string $type = 'percentage';
+
     public float $value = 0;
+
     public float $minOrder = 0;
+
     public ?int $maxUses = null;
+
     public ?string $expiresAt = null;
+
     public string $scope = 'all';
 
     protected function rules(): array
@@ -40,7 +47,9 @@ class CreateDiscount extends Component
     {
         $user = auth()->user();
         $businesses = $user->businesses;
-        if ($businesses->isEmpty()) { return; }
+        if ($businesses->isEmpty()) {
+            return;
+        }
         $defaultId = session('current_business_id', $businesses->first()->id);
         $this->business = $businesses->find($defaultId) ?? $businesses->first();
     }
@@ -48,7 +57,9 @@ class CreateDiscount extends Component
     public function save(CreateDiscountAction $action): void
     {
         $this->validate();
-        if (! $this->business) { return; }
+        if (! $this->business) {
+            return;
+        }
 
         $action([
             'business_id' => $this->business->id,
@@ -70,6 +81,7 @@ class CreateDiscount extends Component
         if (! $this->business) {
             return view('livewire.marketing.create-discount', ['hasBusiness' => false]);
         }
+
         return view('livewire.marketing.create-discount', ['hasBusiness' => true]);
     }
 }

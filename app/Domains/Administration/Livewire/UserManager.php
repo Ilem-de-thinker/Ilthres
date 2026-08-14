@@ -30,6 +30,7 @@ class UserManager extends Component
         // Prevent self-demotion.
         if ($user->id === auth()->id()) {
             session()->flash('error', 'You cannot change your own admin status.');
+
             return;
         }
 
@@ -43,7 +44,7 @@ class UserManager extends Component
         $users = User::query()
             ->when($this->search, fn ($q) => $q->where(function ($q) {
                 $q->where('name', 'like', "%{$this->search}%")
-                  ->orWhere('email', 'like', "%{$this->search}%");
+                    ->orWhere('email', 'like', "%{$this->search}%");
             }))
             ->latest()
             ->paginate(20);

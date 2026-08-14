@@ -33,11 +33,14 @@ class SubscriptionStatus extends Component
 
         $subscription = $this->business->subscription;
         $plan = $subscription?->plan;
+        $isLinkedBusiness = $this->business->website_url;
         $allPlans = Plan::where('is_active', true)->orderBy('sort_order')->get();
 
         $upgradePlan = null;
         $downgradePlan = null;
-        if ($plan) {
+
+        // Linked businesses cannot change plans.
+        if ($plan && ! $isLinkedBusiness) {
             $upgradePlan = $allPlans->firstWhere('sort_order', '>', $plan->sort_order);
             $downgradePlan = $allPlans->last(fn ($p) => $p->sort_order < $plan->sort_order);
         }
@@ -54,6 +57,7 @@ class SubscriptionStatus extends Component
             'limits' => $limits,
             'allPlans' => $allPlans,
             'scheduledPlan' => $scheduledPlan,
+            'isLinkedBusiness' => $isLinkedBusiness,
         ]);
     }
 }

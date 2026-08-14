@@ -7,7 +7,9 @@ use Livewire\Component;
 class NotificationPreferences extends Component
 {
     public bool $emailReviews = true;
+
     public bool $emailSubscription = true;
+
     public bool $emailMarketing = false;
 
     public function mount(): void

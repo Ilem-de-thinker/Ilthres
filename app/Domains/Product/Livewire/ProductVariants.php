@@ -4,18 +4,24 @@ namespace App\Domains\Product\Livewire;
 
 use App\Domains\Product\Actions\UpdateProduct;
 use App\Domains\Product\DTOs\ProductData;
+use App\Models\Media;
 use App\Models\Product;
 use Livewire\Component;
 
 class ProductVariants extends Component
 {
     public ?int $productId = null;
+
     public ?Product $product = null;
+
     public array $variants = [];
+
     public bool $saved = false;
 
     public ?int $pickerVariantIndex = null;
+
     public ?int $pickerOptionIndex = null;
+
     public bool $showImagePicker = false;
 
     protected $listeners = ['variant-image-selected'];
@@ -29,6 +35,7 @@ class ProductVariants extends Component
             $group['options'] = collect($group['options'] ?? [])->map(function ($option) {
                 return is_string($option) ? ['value' => $option, 'image' => null] : $option;
             })->values()->toArray();
+
             return $group;
         })->values()->toArray();
     }
@@ -111,7 +118,7 @@ class ProductVariants extends Component
 
     public function getMediaItemsProperty()
     {
-        return \App\Models\Media::where('business_id', $this->product->business_id)
+        return Media::where('business_id', $this->product->business_id)
             ->where('mime_type', 'like', 'image/%')
             ->orderBy('created_at', 'desc')
             ->get();

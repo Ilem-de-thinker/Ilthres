@@ -1,24 +1,24 @@
 {
     "name": "Default",
     "slug": "default",
-    "description": "Clean, minimal theme suitable for all business types.",
+    "description": "Serene Ivory — airy minimalism with warm ivory surfaces, Playfair Display serif headlines, and delicate champagne gold accents. Premium editorial aesthetic.",
     "thumbnail": null,
     "business_type": null,
     "is_premium": false,
     "sort_order": 0,
     "config": {
         "colors": {
-            "primary": "#4F46E5",
-            "secondary": "#10B981",
-            "background": "#FFFFFF",
-            "text": "#111827",
-            "accent": "#F59E0B"
+            "primary": "#1c1c18",
+            "secondary": "#5e5f5c",
+            "background": "#fcf9f2",
+            "text": "#1c1c18",
+            "accent": "#6c5e06"
         },
         "typography": {
-            "heading": "Inter",
-            "body": "Inter"
+            "heading": "Playfair Display",
+            "body": "Plus Jakarta Sans"
         },
-        "radius": "0.75rem",
+        "radius": "0.25rem",
         "animations": true
     }
 }

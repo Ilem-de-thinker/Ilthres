@@ -30,7 +30,7 @@ describe('Record Payment', function () {
         $data = new TransactionData(
             businessId: $this->business->id,
             subscriptionId: $this->subscription->id,
-            reference: 'ref-' . uniqid(),
+            reference: 'ref-'.uniqid(),
             amount: 5000.00,
             currency: 'NGN',
             status: 'success',
@@ -54,7 +54,7 @@ describe('Record Payment', function () {
         $data = new TransactionData(
             businessId: $this->business->id,
             subscriptionId: $this->subscription->id,
-            reference: 'ref-' . uniqid(),
+            reference: 'ref-'.uniqid(),
             amount: 5000.00,
             currency: 'NGN',
             status: 'failed',

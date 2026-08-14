@@ -6,17 +6,23 @@ use App\Domains\Marketing\Actions\CreateLeadForm;
 use App\Domains\Marketing\Actions\UpdateLeadForm;
 use App\Models\Business;
 use App\Models\LeadForm;
+use Illuminate\Support\Str;
 use Livewire\Component;
 
 class LeadFormBuilder extends Component
 {
     public ?Business $business = null;
+
     public ?LeadForm $editingForm = null;
+
     public ?int $editId = null;
 
     public string $name = '';
+
     public string $description = '';
+
     public string $template = 'custom';
+
     public bool $isActive = true;
 
     public array $fields = [];
@@ -44,7 +50,9 @@ class LeadFormBuilder extends Component
     {
         $user = auth()->user();
         $businesses = $user->businesses;
-        if ($businesses->isEmpty()) { return; }
+        if ($businesses->isEmpty()) {
+            return;
+        }
         $defaultId = session('current_business_id', $businesses->first()->id);
         $this->business = $businesses->find($defaultId) ?? $businesses->first();
     }
@@ -91,12 +99,14 @@ class LeadFormBuilder extends Component
     public function save(CreateLeadForm $createAction, UpdateLeadForm $updateAction): void
     {
         $this->validate();
-        if (! $this->business) { return; }
+        if (! $this->business) {
+            return;
+        }
 
         $data = [
             'business_id' => $this->business->id,
             'name' => $this->name,
-            'slug' => \Illuminate\Support\Str::slug($this->name),
+            'slug' => Str::slug($this->name),
             'description' => $this->description ?: null,
             'template' => $this->template,
             'is_active' => $this->isActive,
@@ -130,6 +140,7 @@ class LeadFormBuilder extends Component
             return view('livewire.marketing.lead-form-builder', ['hasBusiness' => false]);
         }
         $existingForms = LeadForm::where('business_id', $this->business->id)->get();
+
         return view('livewire.marketing.lead-form-builder', [
             'hasBusiness' => true,
             'existingForms' => $existingForms,

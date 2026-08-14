@@ -44,4 +44,16 @@ return [
         'team_members' => 20,
     ],
 
+    'linked_business' => [
+        'max_media' => 5,
+        'max_products' => 0,
+        'max_services' => 0,
+        'premium_themes' => false,
+        'custom_domain' => false,
+        'analytics' => 'basic',
+        'seo_tools' => false,
+        'marketing_links' => false,
+        'team_members' => 1,
+    ],
+
 ];

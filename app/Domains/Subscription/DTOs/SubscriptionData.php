@@ -8,6 +8,7 @@ class SubscriptionData
         public readonly int $businessId,
         public readonly int $planId,
         public readonly string $status = 'trial',
+        public readonly ?float $pricePaid = null,
         public readonly ?string $gateway = null,
         public readonly ?string $gatewayReference = null,
         public readonly ?array $gatewayData = null,

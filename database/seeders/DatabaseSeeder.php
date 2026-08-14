@@ -19,7 +19,12 @@ class DatabaseSeeder extends Seeder
             PlanSeeder::class,
             CategorySeeder::class,
             ThemeSeeder::class,
+            StoreAndUserSeeder::class,
         ]);
+
+        if (app()->environment('local')) {
+            $this->call(DemoDataSeeder::class);
+        }
 
         $password = bcrypt('password');
 

@@ -7,6 +7,7 @@ use App\Domains\Business\DTOs\BusinessData;
 use App\Models\Business;
 use App\Models\Category;
 use App\Models\Plan;
+use App\Models\PlatformSetting;
 use App\Models\Subscription;
 use App\Models\Theme;
 use HopekellDev\Paystack\Exceptions\PaystackException;
@@ -14,6 +15,7 @@ use HopekellDev\Paystack\Paystack;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -125,7 +127,7 @@ class OnboardingWizard extends Component
             2 => ['businessType' => ['required', 'in:product_store,service_business']],
             3 => ['selectedPlanId' => ['required', 'exists:plans,id']],
             4 => [
-                'businessName' => ['required', 'string', 'max:255'],
+                'businessName' => ['required', 'string', 'max:255', 'unique:busnesses'],
                 'businessDescription' => ['nullable', 'string', 'max:1000'],
                 'categoryId' => ['nullable', 'exists:categories,id'],
                 'themeId' => ['required', 'exists:themes,id'],
@@ -225,8 +227,10 @@ class OnboardingWizard extends Component
 
         try {
             $plan = Plan::findOrFail($this->selectedPlanId);
+            $pricingEnabled = (bool) PlatformSetting::get('pricing_enabled', true);
 
-            if ((float) $plan->price === 0.0) {
+            // Free plan or pricing disabled — create directly without payment.
+            if ((float) $plan->price === 0.0 || ! $pricingEnabled) {
                 $this->createBusinessAndFreeSubscription($createBusiness, $plan);
 
                 return;
@@ -235,6 +239,8 @@ class OnboardingWizard extends Component
             $this->initializePaidSubscription($plan);
 
         } catch (\Throwable $e) {
+
+        throw new \Exception($e->getMessage());
             Log::error('Onboarding completion failed', [
                 'user_id' => auth()->id(),
                 'step' => $this->step,
@@ -262,6 +268,7 @@ class OnboardingWizard extends Component
         Subscription::create([
             'business_id' => $business->id,
             'plan_id' => $plan->id,
+            'price_paid' => 0,
             'status' => 'active',
             'starts_at' => now(),
             'gateway' => null,
@@ -407,18 +414,34 @@ class OnboardingWizard extends Component
         ]);
     }
 
+    #[Computed]
+    public function getCategories()
+    {
+        return Category::where('is_active', true)
+            ->orderBy('sort_order')
+            ->get();
+    }
+
+    public function getThemes()
+    {
+        return Theme::where('is_active', true)
+            ->forBusinessType($this->businessType)
+            ->get();
+    }
+
+    public function getPlans()
+    {
+        return Plan::where('is_active', true)
+            ->orderBy('sort_order')
+            ->get();
+    }
+
     public function render()
     {
         return view('livewire.business.onboarding-wizard', [
-            'categories' => Category::where('is_active', true)
-                ->orderBy('sort_order')
-                ->get(),
-            'plans' => Plan::where('is_active', true)
-                ->orderBy('sort_order')
-                ->get(),
-            'themes' => Theme::where('is_active', true)
-                ->forBusinessType($this->businessType)
-                ->get(),
+            'categories' => $this->getThemes(),
+            'plans' => $this->getPlans(),
+            'themes' => $this->getThemes(),
         ]);
     }
 }

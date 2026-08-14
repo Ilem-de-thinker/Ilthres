@@ -1,22 +1,35 @@
 <?php
 
 use App\Domains\Administration\Livewire\AdminDashboard;
+use App\Domains\Administration\Livewire\AiSettingsManager;
 use App\Domains\Administration\Livewire\BusinessManager;
 use App\Domains\Administration\Livewire\CategoryManager;
+use App\Domains\Administration\Livewire\OrderManager;
 use App\Domains\Administration\Livewire\PaymentManager;
+use App\Domains\Administration\Livewire\PlatformAnalytics;
+use App\Domains\Administration\Livewire\PlatformSettingsManager;
 use App\Domains\Administration\Livewire\SubscriptionManager;
 use App\Domains\Administration\Livewire\ThemeManager;
 use App\Domains\Administration\Livewire\UserManager;
+use App\Domains\Administration\Livewire\VerificationManager;
 use App\Domains\Analytics\Actions\RecordEvent;
+use App\Domains\Booking\Livewire\BookingManager;
 use App\Domains\Business\Actions\CreateBusiness;
 use App\Domains\Business\DTOs\BusinessData;
+use App\Domains\Business\Livewire\BusinessDetail;
 use App\Domains\Business\Livewire\PublicProfile;
 use App\Domains\Marketing\Actions\TrackClick;
+use App\Domains\Order\Livewire\Cart;
+use App\Domains\Order\Livewire\Checkout;
+use App\Domains\Order\Livewire\Inquiry;
 use App\Domains\Payment\Actions\RecordPayment;
 use App\Domains\Payment\DTOs\TransactionData;
+use App\Domains\Review\Livewire\ReviewManager;
+use App\Http\Controllers\PublicPageController;
 use App\Http\Middleware\OnboardingMiddleware;
 use App\Models\Business;
 use App\Models\MarketingLink;
+use App\Models\Order;
 use App\Models\Plan;
 use App\Models\Product;
 use App\Models\Promotion;
@@ -96,6 +109,10 @@ Route::middleware('auth')->group(function () {
 
     // Onboarding wizard — excluded from OnboardingMiddleware to avoid redirect loops.
     Route::view('/onboarding', 'pages.onboarding')->name('onboarding');
+
+    // Post-registration choice page — excluded from OnboardingMiddleware.
+    Route::view('/get-started', 'pages.get-started')->name('get-started');
+    Route::view('/link-business', 'pages.link-business')->name('link-business');
 
     // Paystack redirect — reads authorization URL from session and redirects to Paystack.
     Route::get('/onboarding/paystack/redirect', function () {
@@ -229,6 +246,7 @@ Route::middleware('auth')->group(function () {
             $subscription = Subscription::create([
                 'business_id' => $business->id,
                 'plan_id' => $planId,
+                'price_paid' => (float) ($response['data']['amount'] / 100),
                 'status' => 'active',
                 'starts_at' => now(),
                 'ends_at' => now()->addMonth(),
@@ -314,6 +332,7 @@ Route::middleware('auth')->group(function () {
 
             $subscription->update([
                 'plan_id' => $planId,
+                'price_paid' => (float) ($response['data']['amount'] / 100),
                 'ends_at' => now()->addMonth(),
                 'gateway_reference' => $reference,
                 'gateway_data' => $response,
@@ -356,6 +375,153 @@ Route::middleware('auth')->group(function () {
         }
     })->name('subscription.paystack.callback');
 
+    // ─── Link Business Paystack routes ──────────────────────
+    Route::get('/link-business/paystack/redirect', function () {
+        $url = session('link_business_authorization_url');
+        if (! $url) {
+            return redirect()->route('link-business')->with('error', 'Payment session expired. Please try again.');
+        }
+
+        return redirect()->away($url);
+    })->name('link-business.paystack.redirect');
+
+    Route::get('/link-business/paystack/callback', function (Request $request) {
+        $reference = $request->query('reference');
+        $sessionRef = session('link_business_reference');
+        $businessData = session('link_business_data');
+
+        if (! $reference) {
+            return redirect()->route('link-business')->with('error', 'Payment was cancelled.');
+        }
+
+        if (! $sessionRef || $reference !== $sessionRef) {
+            Log::warning('Link business Paystack callback reference mismatch', [
+                'expected' => $sessionRef,
+                'received' => $reference,
+            ]);
+
+            return redirect()->route('link-business')->with('error', 'Payment verification failed. Invalid reference.');
+        }
+
+        if (! $businessData) {
+            Log::warning('Link business Paystack callback missing business data', ['reference' => $reference]);
+
+            return redirect()->route('link-business')->with('error', 'Session expired. Please start again.');
+        }
+
+        try {
+            $response = Paystack::transactions()->verify($reference);
+
+            if (! ($response['status'] ?? false)) {
+                Log::error('Paystack verify API returned false for link business', ['reference' => $reference, 'response' => $response]);
+
+                return redirect()->route('link-business')->with('error', 'Payment verification failed with gateway.');
+            }
+
+            $paystackStatus = $response['data']['status'] ?? '';
+            if ($paystackStatus !== 'success') {
+                Log::warning('Link business Paystack transaction not successful', [
+                    'reference' => $reference,
+                    'status' => $paystackStatus,
+                ]);
+
+                return redirect()->route('link-business')->with('error', 'Payment was not completed.');
+            }
+
+            $planId = $response['data']['metadata']['plan_id'] ?? null;
+            if (! $planId) {
+                Log::error('Link business Paystack callback missing plan_id', ['reference' => $reference]);
+
+                return redirect()->route('link-business')->with('error', 'Invalid payment metadata.');
+            }
+
+            $plan = Plan::find($planId);
+            if (! $plan) {
+                Log::error('Link business Paystack callback plan not found', ['plan_id' => $planId]);
+
+                return redirect()->route('link-business')->with('error', 'Plan not found.');
+            }
+
+            $user = auth()->user();
+
+            // Create the business.
+            $business = app(CreateBusiness::class)(new BusinessData(
+                userId: $businessData['user_id'],
+                type: $businessData['type'],
+                name: $businessData['name'],
+                slug: $businessData['slug'],
+                description: null,
+                email: $businessData['email'],
+                phone: null,
+                whatsapp: null,
+                address: null,
+                city: null,
+                state: null,
+                country: 'Nigeria',
+                categoryId: $businessData['category_id'],
+                logo: null,
+                cover: null,
+                websiteUrl: $businessData['website_url'],
+            ));
+
+            // Create subscription.
+            $subscription = Subscription::create([
+                'business_id' => $business->id,
+                'plan_id' => $planId,
+                'price_paid' => (float) ($response['data']['amount'] / 100),
+                'status' => 'active',
+                'starts_at' => now(),
+                'ends_at' => now()->addMonth(),
+                'gateway' => 'paystack',
+                'gateway_reference' => $reference,
+                'gateway_data' => $response,
+            ]);
+
+            app(RecordPayment::class)(new TransactionData(
+                businessId: $business->id,
+                reference: $reference,
+                amount: (float) ($response['data']['amount'] / 100),
+                status: 'success',
+                subscriptionId: $subscription->id,
+                currency: $response['data']['currency'] ?? 'NGN',
+                description: 'Linked Business plan subscription',
+                gateway: 'paystack',
+                gatewayReference: $reference,
+                gatewayData: $response,
+                paidAt: $response['data']['paid_at'] ?? now()->toDateTimeString(),
+            ));
+
+            // Mark onboarding complete.
+            $user->forceFill([
+                'onboarding_step' => 5,
+                'onboarding_completed' => true,
+            ])->save();
+
+            session(['current_business_id' => $business->id]);
+            session()->forget([
+                'link_business_authorization_url',
+                'link_business_reference',
+                'link_business_data',
+            ]);
+
+            Log::info('Linked business created after successful Paystack payment', [
+                'business_id' => $business->id,
+                'user_id' => $user->id,
+                'plan_id' => $planId,
+                'reference' => $reference,
+            ]);
+
+            return redirect()->route('dashboard');
+        } catch (Throwable $e) {
+            Log::error('Link business Paystack callback failed', [
+                'reference' => $reference,
+                'error' => $e->getMessage(),
+            ]);
+
+            return redirect()->route('link-business')->with('error', 'Payment verification failed. Please contact support with your reference: '.$reference);
+        }
+    })->name('link-business.paystack.callback');
+
     // Logout — excluded from OnboardingMiddleware (must always be accessible).
     Route::post('/logout', function () {
         Auth::logout();
@@ -384,6 +550,19 @@ Route::middleware('auth')->group(function () {
         // Analytics.
         Route::view('/dashboard/analytics', 'pages.analytics')->name('dashboard.analytics');
 
+        // Bookings.
+        Route::get('/dashboard/bookings', BookingManager::class)->name('dashboard.bookings');
+        Route::get('/dashboard/services/{service}/availability', function (Service $service) {
+            if ($service->business->user_id !== auth()->id()) {
+                abort(403);
+            }
+
+            return view('livewire.booking.availability-manager', ['serviceId' => $service->id]);
+        })->name('dashboard.availability');
+
+        // Reviews.
+        Route::get('/dashboard/reviews', ReviewManager::class)->name('dashboard.reviews');
+
         // Subscription.
         Route::view('/dashboard/subscription', 'pages.subscription')->name('dashboard.subscription');
 
@@ -396,6 +575,9 @@ Route::middleware('auth')->group(function () {
         // Marketing.
         Route::view('/dashboard/marketing', 'pages.marketing')->name('dashboard.marketing');
         Route::view('/dashboard/marketing/create', 'pages.marketing-create')->name('dashboard.marketing.create');
+
+        // Hero Banners.
+        Route::view('/dashboard/hero-banners', 'pages.hero-banners')->name('dashboard.hero-banners');
 
         // Promotions.
         Route::view('/dashboard/promotions', 'pages.promotions')->name('dashboard.promotions');
@@ -410,8 +592,19 @@ Route::middleware('auth')->group(function () {
 
         // Business management.
         Route::view('/dashboard/business', 'pages.business-settings')->name('dashboard.business');
-        Route::view('/dashboard/business/edit', 'pages.business-edit')->name('dashboard.business.edit');
         Route::view('/business/create', 'pages.create-business')->name('business.create');
+
+        // Locations.
+        Route::view('/dashboard/locations', 'pages.locations')->name('dashboard.locations');
+
+        // KYC Verification.
+        Route::view('/dashboard/kyc', 'pages.kyc')->name('dashboard.kyc');
+
+        // Website pages & sections.
+        // Route::view('/dashboard/website', 'pages.website')->name('dashboard.website');
+        // Route::get('/dashboard/website/pages/{pageId}/sections', function ($pageId) {
+        //     return view('pages.website-sections', ['pageId' => $pageId]);
+        // })->name('dashboard.website.sections');
 
         // Media library — with subscription plan enforcement.
         Route::middleware('subscription:max_media')->group(function () {
@@ -474,6 +667,9 @@ Route::middleware('auth')->group(function () {
         Route::view('/dashboard/notifications', 'pages.notifications')->name('dashboard.notifications');
         Route::view('/dashboard/notifications/preferences', 'pages.notification-preferences')->name('dashboard.notifications.preferences');
 
+        // Orders.
+        Route::view('/dashboard/orders', 'pages.orders')->name('dashboard.orders');
+
         // Themes.
         Route::get('/dashboard/theme', function () {
             $user = auth()->user();
@@ -513,6 +709,128 @@ Route::get('/go/{link:slug}', function (MarketingLink $link) {
     return redirect()->away($link->url);
 })->name('go');
 
+// ─── Order system (public + auth) ───────────────────────
+Route::middleware('auth')->group(function () {
+    Route::post('/{business:slug}/cart/add/{type}/{id}', function (Business $business, string $type, int $id) {
+        if (! in_array($type, ['product', 'service'])) {
+            abort(400);
+        }
+
+        $item = $type === 'product'
+            ? $business->products()->where('id', $id)->first()
+            : $business->services()->where('id', $id)->first();
+
+        if (! $item || ! $item->is_active) {
+            return back()->with('error', 'Item not available.');
+        }
+
+        $cartKey = 'cart.'.$business->id;
+        $cart = session($cartKey, []);
+        $cartItemId = $type.'_'.$id;
+
+        if (isset($cart[$cartItemId])) {
+            $cart[$cartItemId]['quantity'] += 1;
+        } else {
+            $cart[$cartItemId] = [
+                'type' => $type,
+                'id' => $id,
+                'name' => $item->name,
+                'price' => (float) $item->price,
+                'quantity' => 1,
+                'image' => is_array($item->images) ? ($item->images[0] ?? null) : null,
+            ];
+        }
+
+        session([$cartKey => $cart]);
+
+        return back()->with('success', $item->name.' added to cart.');
+    })->name('order.cart.add');
+
+    Route::get('/{business:slug}/cart', Cart::class)->name('order.cart');
+    Route::get('/{business:slug}/checkout', Checkout::class)->name('order.checkout');
+    Route::get('/{business:slug}/inquiry', Inquiry::class)->name('order.inquiry');
+    Route::get('/{business:slug}/inquiry/{product:slug}', function (Business $business, Product $product) {
+        if ($product->business_id !== $business->id) {
+            abort(404);
+        }
+
+        return view('livewire.order.inquiry', ['businessId' => $business->id, 'productId' => $product->id]);
+    })->name('order.inquiry.product');
+    Route::get('/{business:slug}/inquiry/service/{service:slug}', function (Business $business, Service $service) {
+        if ($service->business_id !== $business->id) {
+            abort(404);
+        }
+
+        return view('livewire.order.inquiry', ['businessId' => $business->id, 'serviceId' => $service->id]);
+    })->name('order.inquiry.service');
+});
+
+// Paystack order callback
+Route::get('/order/paystack/callback', function (Request $request) {
+    $reference = $request->query('reference');
+
+    if (! $reference) {
+        return redirect()->route('dashboard')->with('error', 'Payment verification failed.');
+    }
+
+    try {
+        $response = Paystack::transactions()->verify($reference);
+
+        if (! ($response['status'] ?? false) || ($response['data']['status'] ?? '') !== 'success') {
+            return redirect()->route('dashboard')->with('error', 'Payment was not completed.');
+        }
+
+        $orderId = $response['data']['metadata']['order_id'] ?? null;
+
+        if (! $orderId) {
+            return redirect()->route('dashboard')->with('error', 'Invalid payment metadata.');
+        }
+
+        $order = Order::find($orderId);
+        if (! $order) {
+            return redirect()->route('dashboard')->with('error', 'Order not found.');
+        }
+
+        $order->update([
+            'status' => 'confirmed',
+            'confirmed_at' => now(),
+            'gateway_reference' => $reference,
+            'gateway_data' => $response,
+        ]);
+
+        session()->forget('cart.'.$order->business_id);
+
+        $business = $order->business;
+
+        return redirect()->route('business.profile', ['business' => $business->slug])
+            ->with('success', 'Payment successful! Your order '.$order->order_number.' has been confirmed.');
+
+    } catch (Throwable $e) {
+        Log::error('Order Paystack callback failed', [
+            'reference' => $reference,
+            'error' => $e->getMessage(),
+        ]);
+
+        return redirect()->route('dashboard')->with('error', 'Payment verification failed. Please contact support.');
+    }
+})->name('order.paystack.callback');
+
+// ─── Booking system (public) ────────────────────────────
+Route::get('/{business:slug}/book/{service}', function (Business $business, Service $service) {
+    if ($service->business_id !== $business->id) {
+        abort(404);
+    }
+
+    return view('livewire.booking.book-appointment', ['business' => $business, 'service' => $service]);
+})->name('booking.show');
+
+// ─── Review system (public + auth) ───────────────────────
+Route::middleware('auth')->group(function () {
+    Route::get('/{business:slug}/review', function (Business $business) {
+        return view('livewire.review.leave-review', ['businessId' => $business->id]);
+    })->name('review.create');
+});
+
 // ─── Admin panel ──────────────────────────────────────────
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/', AdminDashboard::class)->name('dashboard');
@@ -522,6 +840,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('/subscriptions', SubscriptionManager::class)->name('subscriptions');
     Route::get('/themes', ThemeManager::class)->name('themes');
     Route::get('/categories', CategoryManager::class)->name('categories');
+    Route::get('/settings', PlatformSettingsManager::class)->name('settings');
+    Route::get('/settings/ai', AiSettingsManager::class)->name('settings.ai');
+    Route::get('/orders', OrderManager::class)->name('orders');
+    Route::get('/analytics', PlatformAnalytics::class)->name('analytics');
+    Route::get('/verifications', VerificationManager::class)->name('verifications');
 });
 
 // ─── Public promotion landing page ───────────────────────
@@ -559,4 +882,10 @@ Route::get('/{business:slug}/promotions/{promotion:slug}', function (Business $b
 // Placed last so static routes (explore, pricing, dashboard, etc.) take precedence.
 Route::get('/{business:slug}/product/{product:slug}', PublicProfile::class)->name('business.product');
 Route::get('/{business:slug}/service/{service:slug}', PublicProfile::class)->name('business.service');
-Route::get('/{business:slug}', PublicProfile::class)->name('business.profile');
+Route::get('/{business:slug}/products', PublicProfile::class)->name('business.products');
+Route::get('/{business:slug}/services', PublicProfile::class)->name('business.services');
+Route::get('/{business:slug}/portfolio', [PublicPageController::class, 'portfolio'])->name('business.portfolio');
+Route::get('/{business:slug}/contact', [PublicPageController::class, 'contact'])->name('business.contact');
+Route::get('/{business:slug}/about', [PublicPageController::class, 'about'])->name('business.about');
+Route::get('/{business:slug}/site', PublicProfile::class)->name('business.site');
+Route::get('/{business:slug}', BusinessDetail::class)->name('business.profile');

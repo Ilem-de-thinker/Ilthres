@@ -16,30 +16,53 @@ use Livewire\Component;
 class PromotionForm extends Component
 {
     public ?Business $business = null;
+
     public ?Promotion $promotion = null;
+
     public bool $editing = false;
 
     public string $name = '';
+
     public ?string $description = null;
+
     public string $promotionType = 'percentage';
+
     public string $scope = 'all';
+
     public string $discountType = 'percentage';
+
     public ?float $discountValue = null;
+
     public ?float $fixedPrice = null;
+
     public ?int $buyX = 2;
+
     public ?int $buyY = 1;
+
     public string $buyYDiscountType = 'free';
+
     public ?float $buyYDiscountValue = null;
+
     public ?float $minOrderAmount = null;
+
     public ?int $maxUses = null;
+
     public ?int $customerLimit = null;
+
     public int $priority = 0;
+
     public string $status = 'draft';
+
     public bool $showCountdown = true;
+
     public bool $showBadge = true;
+
     public bool $featured = false;
+
     public ?string $startsAt = null;
+
     public ?string $endsAt = null;
+
     public array $badgeConfig = [
         'color' => 'red',
         'position' => 'top-left',
@@ -47,9 +70,13 @@ class PromotionForm extends Component
     ];
 
     public array $selectedProductIds = [];
+
     public array $selectedServiceIds = [];
+
     public array $selectedCategoryIds = [];
+
     public string $productSearch = '';
+
     public string $serviceSearch = '';
 
     public function mount(?int $promotionId = null): void
@@ -171,7 +198,7 @@ class PromotionForm extends Component
         }
     }
 
-    public function save(CreatePromotion|UpdatePromotion $action): void
+    public function save(): void
     {
         $this->validate();
 
@@ -182,7 +209,7 @@ class PromotionForm extends Component
         $data = new PromotionData(
             businessId: $this->business->id,
             name: $this->name,
-            slug: Str::slug($this->name) . ($this->promotion ? '' : '-' . Str::random(6)),
+            slug: Str::slug($this->name).($this->promotion ? '' : '-'.Str::random(6)),
             description: $this->description ?: null,
             promotionType: $this->promotionType,
             scope: $this->scope,
@@ -211,7 +238,7 @@ class PromotionForm extends Component
         );
 
         if ($this->editing && $this->promotion) {
-            $action($this->promotion, $data);
+            app(UpdatePromotion::class)($this->promotion, $data);
             session()->flash('success', 'Promotion updated successfully.');
         } else {
             app(CreatePromotion::class)($data);

@@ -1,4 +1,3 @@
-{{-- Admin dashboard — platform-wide stats, revenue, charts. --}}
 <div>
     {{-- Page header. --}}
     <div class="mb-6">
@@ -34,72 +33,24 @@
         </div>
     </div>
 
-    {{-- Stats grid — row 2: subscription breakdown. --}}
-    <div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-4">
-        <div class="rounded-lg border border-gray-200 bg-white p-3 text-center">
-            <p class="text-lg font-bold text-green-600">{{ $activeSubscriptions }}</p>
-            <p class="text-xs text-gray-500">Active</p>
-        </div>
-        <div class="rounded-lg border border-gray-200 bg-white p-3 text-center">
-            <p class="text-lg font-bold text-blue-600">{{ $trialSubscriptions }}</p>
-            <p class="text-xs text-gray-500">Trial</p>
-        </div>
-        <div class="rounded-lg border border-gray-200 bg-white p-3 text-center">
-            <p class="text-lg font-bold text-red-600">{{ $expiredSubscriptions }}</p>
-            <p class="text-xs text-gray-500">Expired</p>
-        </div>
-        <div class="rounded-lg border border-gray-200 bg-white p-3 text-center">
-            <p class="text-lg font-bold text-gray-600">{{ $cancelledSubscriptions }}</p>
-            <p class="text-xs text-gray-500">Cancelled</p>
-        </div>
-    </div>
-
     {{-- Charts row. --}}
-    <div class="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
-        {{-- Revenue chart. --}}
-        <div class="rounded-lg border border-gray-200 bg-white p-4">
+    <div class="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div class="rounded-lg border border-gray-200 bg-white p-4" x-data="chart($el)" data-chart='@json($revenueConfig)'>
             <h3 class="mb-1 text-sm font-semibold text-gray-900">Revenue (30 days)</h3>
             <p class="mb-4 text-xs text-gray-500">Daily revenue in NGN</p>
-            <div class="flex items-end gap-0.5" style="height: 120px;">
-                @php $barMax = $revenueMax; @endphp
-                @foreach ($revenueValues as $i => $value)
-                    @php
-                        $pct = $barMax > 0 ? ($value / $barMax) * 100 : 0;
-                        $h = max(1, round(($pct / 100) * 120));
-                    @endphp
-                    <div class="flex-1 flex flex-col items-center justify-end" title="{{ $revenueLabels[$i] }}: ₦{{ number_format($value) }}">
-                        <div class="w-full rounded-t {{ $value > 0 ? 'bg-indigo-500' : 'bg-gray-100' }}" style="height: {{ $h }}px;"></div>
-                    </div>
-                @endforeach
-            </div>
-            <div class="mt-2 flex justify-between text-xs text-gray-400">
-                <span>{{ $revenueLabels[0] }}</span>
-                <span>{{ $revenueLabels[15] }}</span>
-                <span>{{ $revenueLabels[29] }}</span>
-            </div>
+            <div style="height: 160px;"><canvas></canvas></div>
         </div>
 
-        {{-- User growth chart. --}}
-        <div class="rounded-lg border border-gray-200 bg-white p-4">
+        <div class="rounded-lg border border-gray-200 bg-white p-4" x-data="chart($el)" data-chart='@json($userConfig)'>
             <h3 class="mb-1 text-sm font-semibold text-gray-900">User Signups (30 days)</h3>
             <p class="mb-4 text-xs text-gray-500">Daily new registrations</p>
-            <div class="flex items-end gap-0.5" style="height: 120px;">
-                @php $barMax = $userMax; @endphp
-                @foreach ($userValues as $i => $value)
-                    @php
-                        $pct = $barMax > 0 ? ($value / $barMax) * 100 : 0;
-                        $h = max(1, round(($pct / 100) * 120));
-                    @endphp
-                    <div class="flex-1 flex flex-col items-center justify-end" title="{{ $userLabels[$i] }}: {{ $value }} users">
-                        <div class="w-full rounded-t {{ $value > 0 ? 'bg-emerald-500' : 'bg-gray-100' }}" style="height: {{ $h }}px;"></div>
-                    </div>
-                @endforeach
-            </div>
-            <div class="mt-2 flex justify-between text-xs text-gray-400">
-                <span>{{ $userLabels[0] }}</span>
-                <span>{{ $userLabels[15] }}</span>
-                <span>{{ $userLabels[29] }}</span>
-            </div>
+            <div style="height: 160px;"><canvas></canvas></div>
+        </div>
+
+        <div class="rounded-lg border border-gray-200 bg-white p-4" x-data="chart($el)" data-chart='@json($subscriptionConfig)'>
+            <h3 class="mb-1 text-sm font-semibold text-gray-900">Subscription Breakdown</h3>
+            <p class="mb-4 text-xs text-gray-500">Current status distribution</p>
+            <div style="height: 160px;"><canvas></canvas></div>
         </div>
     </div>
 

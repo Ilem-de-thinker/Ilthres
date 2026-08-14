@@ -2,8 +2,8 @@
 
 namespace App\Domains\Marketing\Actions;
 
-use App\Models\LeadForm;
 use App\Domains\Marketing\Events\LeadFormCreated;
+use App\Models\LeadForm;
 
 class CreateLeadForm
 {

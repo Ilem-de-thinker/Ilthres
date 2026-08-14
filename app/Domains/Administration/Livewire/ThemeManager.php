@@ -26,7 +26,7 @@ class ThemeManager extends Component
         $theme = Theme::findOrFail($themeId);
         $theme->update(['is_active' => ! $theme->is_active]);
 
-        session()->flash('success', "Theme {$theme->name} has been " . ($theme->is_active ? 'enabled' : 'disabled') . ".");
+        session()->flash('success', "Theme {$theme->name} has been ".($theme->is_active ? 'enabled' : 'disabled').'.');
     }
 
     public function render()

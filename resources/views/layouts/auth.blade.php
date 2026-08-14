@@ -18,19 +18,19 @@
             </div>
             <div class="relative text-center max-w-md">
                 <a href="/" class="text-3xl font-bold tracking-tight text-dark-gold">Ilthres</a>
-                <p class="mt-4 text-lg text-gray-700">Digital business presence platform for African entrepreneurs.</p>
+                <p class="mt-4 text-lg text-gray-700">Your business operating system — sell, book, and grow.</p>
                 <div class="mt-8 space-y-4 text-left">
                     <div class="flex items-start gap-3">
                         <svg class="mt-0.5 h-5 w-5 shrink-0 text-dark-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                        <span class="text-sm text-gray-600">Create a professional business profile in minutes</span>
+                        <span class="text-sm text-gray-600">Professional online presence with custom themes</span>
                     </div>
                     <div class="flex items-start gap-3">
                         <svg class="mt-0.5 h-5 w-5 shrink-0 text-dark-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                        <span class="text-sm text-gray-600">Showcase products or services with custom themes</span>
+                        <span class="text-sm text-gray-600">Sell products, take bookings, and manage orders</span>
                     </div>
                     <div class="flex items-start gap-3">
                         <svg class="mt-0.5 h-5 w-5 shrink-0 text-dark-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                        <span class="text-sm text-gray-600">Get discovered by customers across Nigeria</span>
+                        <span class="text-sm text-gray-600">Get discovered by customers searching nearby</span>
                     </div>
                 </div>
             </div>

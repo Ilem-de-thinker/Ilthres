@@ -2,9 +2,9 @@
 
 namespace App\Domains\Marketing\Actions;
 
+use App\Domains\Marketing\Events\DiscountRedeemed;
 use App\Models\Discount;
 use App\Models\DiscountRedemption;
-use App\Domains\Marketing\Events\DiscountRedeemed;
 
 class RedeemDiscount
 {

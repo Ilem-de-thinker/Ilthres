@@ -16,9 +16,13 @@ use Livewire\Component;
 class Register extends Component
 {
     public string $name = '';
+
     public string $email = '';
+
     public string $password = '';
+
     public string $passwordConfirmation = '';
+
     public bool $agree = false;
 
     protected function rules(): array
@@ -57,10 +61,10 @@ class Register extends Component
         auth()->attempt(['email' => $this->email, 'password' => $this->password]);
         session()->regenerate();
 
-        // Mark onboarding as not started — middleware will redirect to /onboarding.
+        // Mark onboarding as not started — middleware will redirect to /get-started.
         auth()->user()->forceFill(['onboarding_step' => 0, 'onboarding_completed' => false])->save();
 
-        $this->redirect(route('onboarding'), navigate: true);
+        $this->redirect(route('get-started'), navigate: true);
     }
 
     public function render()

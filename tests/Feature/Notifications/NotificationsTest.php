@@ -11,8 +11,8 @@ use App\Domains\Notifications\Notifications\SubscriptionExpiring;
 use App\Domains\Notifications\Notifications\VerificationApproved;
 use App\Models\Business;
 use App\Models\Notification;
+use App\Models\Subscription;
 use App\Models\User;
-use Illuminate\Support\Facades\Notification as NotificationFacade;
 use Livewire\Livewire;
 
 uses()->group('notifications');
@@ -217,7 +217,7 @@ describe('Notification Classes', function () {
     });
 
     it('SubscriptionExpiring has database representation', function () {
-        $subscription = \App\Models\Subscription::factory()->create();
+        $subscription = Subscription::factory()->create();
         $notification = new SubscriptionExpiring(subscription: $subscription);
 
         $data = $notification->toDatabase($this->user);

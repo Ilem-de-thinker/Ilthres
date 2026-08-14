@@ -1,96 +1,52 @@
-{{--
-  Modern theme · Service layout — sleek, professional, contemporary design (Stripe/SaaS aesthetic).
---}}
+{{-- Modern theme · Service layout — Lumina SaaS glassmorphism --}}
 @section('title', $business->name . ' — Services')
 
 @push('styles')
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
     :root {
-        --color-primary: {{ $colors['primary'] ?? '#4F46E5' }};
-        --color-secondary: {{ $colors['secondary'] ?? '#06B6D4' }};
-        --color-background: {{ $colors['background'] ?? '#F9FAFB' }};
-        --color-text: {{ $colors['text'] ?? '#1F2937' }};
-        --color-accent: {{ $colors['accent'] ?? '#EC4899' }};
-        --font-heading: 'Plus Jakarta Sans', sans-serif;
-        --font-body: 'Inter', sans-serif;
-        --radius: {{ $radius ?? '0.5rem' }};
+        --c-primary: {{ $colors['primary'] ?? '#4648d4' }};
+        --c-secondary: {{ $colors['secondary'] ?? '#006591' }};
+        --c-bg: {{ $colors['background'] ?? '#f0f2ff' }};
+        --c-text: {{ $colors['text'] ?? '#1a1a2e' }};
+        --c-accent: {{ $colors['accent'] ?? '#b90538' }};
+        --c-font-heading: '{{ $typography['heading'] ?? 'Plus Jakarta Sans' }}', sans-serif;
+        --c-font-body: '{{ $typography['body'] ?? 'Plus Jakarta Sans' }}', sans-serif;
+        --c-radius: {{ $radius ?? '1rem' }};
     }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: var(--font-body); background: var(--color-background); color: var(--color-text); line-height: 1.6; -webkit-font-smoothing: antialiased; }
-    a { color: var(--color-primary); text-decoration: none; transition: all 0.2s ease; }
-    a:hover { opacity: 0.85; }
-    
-    .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
-    section { padding: 6rem 0; position: relative; }
-    h1, h2, h3, h4 { font-family: var(--font-heading); color: var(--color-text); line-height: 1.25; font-weight: 700; }
-    img { max-width: 100%; height: auto; display: block; }
-    
-    /* Elegant Modern Buttons */
-    .btn {
-        display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
-        padding: 0.75rem 1.5rem; border-radius: var(--radius);
-        font-family: var(--font-heading); font-weight: 600; font-size: 0.875rem; 
-        border: 1px solid transparent; cursor: pointer;
-        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); text-decoration: none;
-    }
-    .btn-primary { 
-        background: var(--color-primary); 
-        color: #ffffff;
-        box-shadow: 0 4px 12px color-mix(in srgb, var(--color-primary) 15%, transparent);
-    }
-    .btn-primary:hover { 
-        transform: translateY(-1px);
-        box-shadow: 0 6px 16px color-mix(in srgb, var(--color-primary) 25%, transparent);
-    }
-    .btn-outline { 
-        background: #ffffff; 
-        border: 1px solid color-mix(in srgb, var(--color-text) 12%, transparent); 
-        color: var(--color-text);
-        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-    }
-    .btn-outline:hover { 
-        background: color-mix(in srgb, var(--color-text) 2%, transparent);
-        border-color: color-mix(in srgb, var(--color-text) 20%, transparent);
-        transform: translateY(-1px);
-    }
-    
-    /* Premium Cards */
-    .card {
-        background: #ffffff;
-        border-radius: var(--radius);
-        border: 1px solid color-mix(in srgb, var(--color-text) 6%, transparent);
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.01);
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        overflow: hidden;
-    }
-    .card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
-        border-color: color-mix(in srgb, var(--color-primary) 15%, transparent);
-    }
-    
-    /* Grid system */
-    .grid { display: grid; gap: 2rem; }
-    .grid-2 { grid-template-columns: repeat(2, 1fr); }
-    .grid-3 { grid-template-columns: repeat(3, 1fr); }
-    .grid-4 { grid-template-columns: repeat(4, 1fr); }
-    @media (max-width: 991px) { .grid-4 { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 768px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } .container { padding: 0 1.5rem; } section { padding: 4.5rem 0; } }
-    
-    .section-title { font-size: 2rem; font-weight: 800; text-align: center; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
-    .section-subtitle { font-size: 0.9375rem; color: color-mix(in srgb, var(--color-text) 50%, transparent); text-align: center; margin-bottom: 3.5rem; font-weight: 500; }
+    body { background: var(--c-bg); color: var(--c-text); font-family: var(--c-font-body); }
+    h1, h2, h3, h4 { font-family: var(--c-font-heading); font-weight: 800; letter-spacing: -0.025em; }
+    ::selection { background: var(--c-primary); color: #ffffff; }
+
+    [style*="background: #4648d4"] { background: var(--c-primary) !important; }
+    [style*="color: #4648d4"] { color: var(--c-primary) !important; }
+    [style*="color: #1a1a2e"] { color: var(--c-text) !important; }
+    [style*="color: #006591"] { color: var(--c-secondary) !important; }
+    [style*="color: #b90538"] { color: var(--c-accent) !important; }
+    [style*="background: #b90538"] { background: var(--c-accent) !important; }
+    [style*="border-color: rgba(70,72,212"] { border-color: var(--c-primary) !important; }
+    [style*="font-family: 'Plus Jakarta Sans'"] { font-family: var(--c-font-body) !important; }
+    [style*="font-weight: 800"] { font-family: var(--c-font-heading) !important; }
+
+    @if (!($animations ?? true))
+        *, *::before, *::after { animation-duration: 0s !important; transition-duration: 0s !important; }
+    @endif
+
+    .glass { background: rgba(255,255,255,0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.2); border-radius: var(--c-radius); }
+    .glass-card { background: rgba(255,255,255,0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.2); border-radius: var(--c-radius); }
+    .btn-primary { display: inline-flex; align-items: center; gap: 8px; padding: 16px 40px; background: linear-gradient(135deg, var(--c-primary), var(--c-secondary)); color: #ffffff; border: none; border-radius: var(--c-radius); font-family: var(--c-font-body); font-weight: 600; cursor: pointer; box-shadow: 0 4px 24px rgba(70,72,212,0.3); text-decoration: none; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(70,72,212,0.4); }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--c-primary); border-radius: 3px; }
 </style>
 @endpush
 
-<div>
+<div class="min-h-screen flex flex-col">
     @include('themes::modern.service.header')
-    @include('themes::modern.service.hero')
-    @include('themes::modern.service.about')
-    @include('themes::modern.service.portfolio')
-    @include('themes::modern.service.services')
-    @include('themes::modern.service.contact')
+    <main class="flex-1 pt-0">
+        @include('themes::modern.service.hero')
+        @include('themes::modern.service.about')
+        @include('themes::modern.service.services')
+    </main>
     @include('themes::modern.service.footer')
 </div>

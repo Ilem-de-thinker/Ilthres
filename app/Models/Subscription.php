@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
 /**
  * Represents a subscription record linking a business to a plan.
@@ -13,15 +14,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $business_id
  * @property int $plan_id
  * @property string $status trial | active | expired | cancelled | past_due
- * @property \Illuminate\Support\Carbon|null $trial_ends_at
- * @property \Illuminate\Support\Carbon $starts_at
- * @property \Illuminate\Support\Carbon|null $ends_at
- * @property \Illuminate\Support\Carbon|null $cancelled_at
+ * @property Carbon|null $trial_ends_at
+ * @property Carbon $starts_at
+ * @property Carbon|null $ends_at
+ * @property Carbon|null $cancelled_at
  * @property string|null $gateway Payment gateway used (paystack, flutterwave, etc.)
  * @property string|null $gateway_reference Gateway subscription reference
  * @property array|null $gateway_data Raw gateway response data
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  */
 class Subscription extends Model
 {
@@ -33,7 +34,7 @@ class Subscription extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'business_id', 'plan_id', 'scheduled_plan_id', 'status',
+        'business_id', 'plan_id', 'price_paid', 'scheduled_plan_id', 'status',
         'trial_ends_at', 'starts_at', 'ends_at', 'cancelled_at',
         'gateway', 'gateway_reference', 'gateway_data',
     ];

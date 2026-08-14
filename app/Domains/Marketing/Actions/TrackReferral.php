@@ -2,8 +2,8 @@
 
 namespace App\Domains\Marketing\Actions;
 
-use App\Models\Referral;
 use App\Domains\Marketing\Events\ReferralConverted;
+use App\Models\Referral;
 
 class TrackReferral
 {

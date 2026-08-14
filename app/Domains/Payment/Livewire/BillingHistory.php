@@ -4,8 +4,9 @@ namespace App\Domains\Payment\Livewire;
 
 use App\Models\Business;
 use App\Models\Transaction;
+use Livewire\Component;
 
-class BillingHistory extends \Livewire\Component
+class BillingHistory extends Component
 {
     public ?Business $business = null;
 

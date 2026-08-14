@@ -4,6 +4,7 @@ namespace App\Domains\Authentication\Livewire;
 
 use App\Domains\Authentication\Actions\AuthenticateSession;
 use Illuminate\Cache\RateLimiter;
+use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
 /**
@@ -15,7 +16,9 @@ use Livewire\Component;
 class Login extends Component
 {
     public string $email = '';
+
     public string $password = '';
+
     public bool $remember = false;
 
     protected function rules(): array
@@ -37,7 +40,7 @@ class Login extends Component
         $this->validate();
 
         // Throttle key = email + IP to prevent distributed brute force.
-        $throttleKey = 'login:' . strtolower($this->email) . '|' . request()->ip();
+        $throttleKey = 'login:'.strtolower($this->email).'|'.request()->ip();
 
         // Check if too many attempts.
         if ($limiter->tooManyAttempts($throttleKey, 5)) {
@@ -61,7 +64,7 @@ class Login extends Component
 
             $this->redirect($redirectUrl, navigate: true);
 
-        } catch (\Illuminate\Validation\ValidationException) {
+        } catch (ValidationException) {
             // Hit — increment the counter and surface the error.
             $limiter->hit($throttleKey, 60); // 60-second decay window.
 

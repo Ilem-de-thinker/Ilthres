@@ -18,9 +18,13 @@ class UploadMedia extends Component
     use WithFileUploads;
 
     public ?int $selectedBusinessId = null;
+
     public ?Business $business = null;
+
     public $file = null;
+
     public ?string $collection = null;
+
     public ?string $uploadError = null;
 
     protected function rules(): array
@@ -62,6 +66,7 @@ class UploadMedia extends Component
             $this->selectedBusinessId = null;
             $this->file = null;
             $this->uploadError = null;
+
             return;
         }
 

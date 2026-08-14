@@ -28,8 +28,9 @@ describe('Registration', function () {
             ->set('email', 'john@example.com')
             ->set('password', 'Password1!')
             ->set('passwordConfirmation', 'Password1!')
+            ->set('agree', true)
             ->call('register')
-            ->assertRedirect('/onboarding');
+            ->assertRedirect('/get-started');
 
         expect(User::where('email', 'john@example.com')->exists())->toBeTrue();
     });

@@ -5,17 +5,22 @@ namespace App\Domains\Marketing\Livewire;
 use App\Domains\Marketing\Actions\CreateLoyaltyProgram;
 use App\Domains\Marketing\Actions\UpdateLoyaltyProgram;
 use App\Models\Business;
-use App\Models\LoyaltyProgram;
 use App\Models\LoyaltyPointsTransaction;
+use App\Models\LoyaltyProgram;
 use Livewire\Component;
 
 class LoyaltySettings extends Component
 {
     public ?Business $business = null;
+
     public ?LoyaltyProgram $program = null;
+
     public string $name = 'Loyalty Program';
+
     public bool $isActive = true;
+
     public array $earningRules = [];
+
     public array $rewards = [];
 
     protected function rules(): array
@@ -30,7 +35,9 @@ class LoyaltySettings extends Component
     {
         $user = auth()->user();
         $businesses = $user->businesses;
-        if ($businesses->isEmpty()) { return; }
+        if ($businesses->isEmpty()) {
+            return;
+        }
         $defaultId = session('current_business_id', $businesses->first()->id);
         $this->business = $businesses->find($defaultId) ?? $businesses->first();
 
@@ -87,7 +94,9 @@ class LoyaltySettings extends Component
     public function save(CreateLoyaltyProgram $createAction, UpdateLoyaltyProgram $updateAction): void
     {
         $this->validate();
-        if (! $this->business) { return; }
+        if (! $this->business) {
+            return;
+        }
 
         $data = [
             'business_id' => $this->business->id,

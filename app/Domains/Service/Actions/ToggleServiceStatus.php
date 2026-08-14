@@ -8,7 +8,7 @@ class ToggleServiceStatus
 {
     public function __invoke(Service $service): Service
     {
-        $service->update(['is_active' => !$service->is_active]);
+        $service->update(['is_active' => ! $service->is_active]);
 
         return $service;
     }

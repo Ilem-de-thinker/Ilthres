@@ -1,6 +1,5 @@
 <?php
 
-use App\Domains\Business\Actions\CreateBusiness;
 use App\Domains\Business\Actions\DeleteBusiness;
 use App\Domains\Business\Actions\UpdateBusiness;
 use App\Domains\Business\DTOs\BusinessData;
@@ -9,6 +8,8 @@ use App\Domains\Business\Livewire\EditBusiness;
 use App\Domains\Business\Policies\BusinessPolicy;
 use App\Models\Business;
 use App\Models\Category;
+use App\Models\Product;
+use App\Models\Service;
 use App\Models\Theme;
 use App\Models\User;
 use Livewire\Livewire;
@@ -76,7 +77,7 @@ describe('Edit Business', function () {
         $business = Business::factory()->create(['user_id' => $this->user->id]);
         session(['current_business_id' => $business->id]);
 
-        $this->get('/dashboard/business/edit')->assertSuccessful();
+        $this->get('/dashboard/business')->assertSuccessful();
     });
 
     it('updates business details', function () {
@@ -214,14 +215,14 @@ describe('Public Profile', function () {
 
     it('renders product detail page', function () {
         $business = Business::factory()->productStore()->create(['user_id' => $this->user->id, 'is_active' => true]);
-        $product = \App\Models\Product::factory()->create(['business_id' => $business->id, 'is_active' => true]);
+        $product = Product::factory()->create(['business_id' => $business->id, 'is_active' => true]);
 
         $this->get("/{$business->slug}/product/{$product->slug}")->assertSuccessful();
     });
 
     it('renders service detail page', function () {
         $business = Business::factory()->serviceBusiness()->create(['user_id' => $this->user->id, 'is_active' => true]);
-        $service = \App\Models\Service::factory()->create(['business_id' => $business->id, 'is_active' => true]);
+        $service = Service::factory()->create(['business_id' => $business->id, 'is_active' => true]);
 
         $this->get("/{$business->slug}/service/{$service->slug}")->assertSuccessful();
     });

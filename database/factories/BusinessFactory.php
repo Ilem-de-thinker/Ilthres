@@ -20,7 +20,7 @@ class BusinessFactory extends Factory
             'user_id' => User::factory(),
             'category_id' => Category::factory(),
             'name' => $name,
-            'slug' => Str::slug($name) . '-' . fake()->unique()->randomNumber(5),
+            'slug' => Str::slug($name).'-'.fake()->unique()->randomNumber(5),
             'type' => Business::TYPE_PRODUCT_STORE,
             'description' => fake()->paragraph(),
             'email' => fake()->companyEmail(),

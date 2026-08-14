@@ -15,21 +15,33 @@ class ProductEdit extends Component
     use WithFileUploads;
 
     public ?int $productId = null;
+
     public ?Product $product = null;
 
     public string $name = '';
+
     public ?string $description = null;
+
     public ?float $price = null;
+
     public ?float $comparePrice = null;
+
     public string $currency = 'NGN';
+
     public bool $isActive = true;
+
     public bool $isFeatured = false;
+
     public int $sortOrder = 0;
+
     public array $images = [];
+
     public array $variants = [];
 
     public bool $showMediaPicker = false;
+
     public array $pendingImages = [];
+
     public $mediaUpload = null;
 
     protected function rules(): array
@@ -73,6 +85,7 @@ class ProductEdit extends Component
             $group['options'] = collect($group['options'] ?? [])->map(function ($option) {
                 return is_string($option) ? ['value' => $option, 'image' => null] : $option;
             })->values()->toArray();
+
             return $group;
         })->values()->toArray();
     }
@@ -143,7 +156,9 @@ class ProductEdit extends Component
     public function uploadMedia(UploadMediaAction $uploadMedia): void
     {
         $this->validateOnly('mediaUpload');
-        if (! $this->mediaUpload) return;
+        if (! $this->mediaUpload) {
+            return;
+        }
 
         try {
             $media = $uploadMedia($this->product->business, $this->mediaUpload, 'product-images');

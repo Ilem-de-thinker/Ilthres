@@ -151,7 +151,7 @@
                         </p>
                         <p class="text-xs text-gray-500">/{{ $plan->interval }}</p>
                         <ul class="mt-4 space-y-2">
-                            @foreach ($plan->features as $feature)
+                            @foreach (json_decode($plan->features) as $feature)
                                 <li class="flex items-start gap-2 text-xs text-gray-600">
                                     <svg class="mt-0.5 h-3.5 w-3.5 shrink-0 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                                     {{ $feature }}

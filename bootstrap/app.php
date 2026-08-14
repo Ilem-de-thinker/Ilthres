@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\AdminMiddleware;
+use App\Http\Middleware\ResolveBusinessDomain;
 use App\Http\Middleware\SubscriptionMiddleware;
 use HopekellDev\Paystack\Exceptions\PaystackException;
 use Illuminate\Database\QueryException;
@@ -15,11 +16,15 @@ return Application::configure(basePath: dirname(__DIR__))
         web: __DIR__.'/../routes/web.php',
         commands: __DIR__.'/routes/console.php',
         health: '/up',
+        then: function () {
+            require base_path('routes/website.php');
+        },
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'admin' => AdminMiddleware::class,
             'subscription' => SubscriptionMiddleware::class,
+            'domain' => ResolveBusinessDomain::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

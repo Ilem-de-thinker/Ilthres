@@ -14,12 +14,12 @@ class MediaFactory extends Factory
     {
         return [
             'business_id' => Business::factory(),
-            'filename' => fake()->uuid() . '.jpg',
-            'original_name' => fake()->word() . '.jpg',
+            'filename' => fake()->uuid().'.jpg',
+            'original_name' => fake()->word().'.jpg',
             'mime_type' => 'image/jpeg',
             'size' => fake()->numberBetween(10000, 5000000),
             'disk' => 'local',
-            'path' => 'media/' . fake()->uuid() . '.jpg',
+            'path' => 'media/'.fake()->uuid().'.jpg',
             'collection' => 'gallery',
         ];
     }

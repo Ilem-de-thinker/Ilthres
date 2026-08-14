@@ -12,6 +12,7 @@ class ProductImportView extends Component
     use WithFileUploads;
 
     public ?Business $business = null;
+
     public $csvFile = null;
 
     protected function rules(): array
@@ -25,7 +26,9 @@ class ProductImportView extends Component
     {
         $user = auth()->user();
         $businesses = $user->businesses;
-        if ($businesses->isEmpty()) { return; }
+        if ($businesses->isEmpty()) {
+            return;
+        }
         $defaultId = session('current_business_id', $businesses->first()->id);
         $this->business = $businesses->find($defaultId) ?? $businesses->first();
     }
@@ -33,7 +36,9 @@ class ProductImportView extends Component
     public function import(): void
     {
         $this->validate();
-        if (! $this->business) { return; }
+        if (! $this->business) {
+            return;
+        }
 
         $path = $this->csvFile->store('product-imports');
         $filename = $this->csvFile->getClientOriginalName();

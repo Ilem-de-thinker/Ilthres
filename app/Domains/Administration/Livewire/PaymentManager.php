@@ -13,7 +13,9 @@ class PaymentManager extends Component
     use WithPagination;
 
     public string $search = '';
+
     public string $filterStatus = '';
+
     public string $filterGateway = '';
 
     public function render()

@@ -17,17 +17,29 @@ use Livewire\Component;
 class AdminDashboard extends Component
 {
     public int $totalUsers = 0;
+
     public int $usersToday = 0;
+
     public int $usersThisMonth = 0;
+
     public int $totalBusinesses = 0;
+
     public int $businessesToday = 0;
+
     public float $totalRevenue = 0;
+
     public float $revenueToday = 0;
+
     public float $revenueThisMonth = 0;
+
     public int $pendingBusinesses = 0;
+
     public int $activeSubscriptions = 0;
+
     public int $trialSubscriptions = 0;
+
     public int $expiredSubscriptions = 0;
+
     public int $cancelledSubscriptions = 0;
 
     public function mount(): void
@@ -91,6 +103,42 @@ class AdminDashboard extends Component
             $userValues->push($userGrowth[$date] ?? 0);
         }
 
+        $revenueConfig = [
+            'type' => 'bar',
+            'labels' => $revenueLabels,
+            'datasets' => [[
+                'label' => 'Revenue (₦)',
+                'data' => $revenueValues,
+                'backgroundColor' => '#8b5cf6',
+                'borderRadius' => 4,
+            ]],
+            'legend' => false,
+        ];
+
+        $userConfig = [
+            'type' => 'line',
+            'labels' => $userLabels,
+            'datasets' => [[
+                'label' => 'New Users',
+                'data' => $userValues,
+                'borderColor' => '#10b981',
+                'backgroundColor' => 'rgba(16, 185, 129, 0.08)',
+                'pointBackgroundColor' => '#10b981',
+            ]],
+            'legend' => false,
+        ];
+
+        $subscriptionConfig = [
+            'type' => 'doughnut',
+            'labels' => ['Active', 'Trial', 'Expired', 'Cancelled'],
+            'datasets' => [[
+                'data' => [$this->activeSubscriptions, $this->trialSubscriptions, $this->expiredSubscriptions, $this->cancelledSubscriptions],
+                'backgroundColor' => ['#10b981', '#3b82f6', '#f59e0b', '#ef4444'],
+                'borderWidth' => 0,
+            ]],
+            'legend' => true,
+        ];
+
         // Recent transactions.
         $recentTransactions = Transaction::with('business')
             ->latest('paid_at')
@@ -107,12 +155,9 @@ class AdminDashboard extends Component
         $recentUsers = User::latest()->take(5)->get();
 
         return view('livewire.administration.admin-dashboard', [
-            'revenueLabels' => $revenueLabels,
-            'revenueValues' => $revenueValues,
-            'revenueMax' => max(1, $revenueValues->max()),
-            'userLabels' => $userLabels,
-            'userValues' => $userValues,
-            'userMax' => max(1, $userValues->max()),
+            'revenueConfig' => $revenueConfig,
+            'userConfig' => $userConfig,
+            'subscriptionConfig' => $subscriptionConfig,
             'recentTransactions' => $recentTransactions,
             'recentSubscriptions' => $recentSubscriptions,
             'recentUsers' => $recentUsers,

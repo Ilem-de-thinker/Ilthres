@@ -2,8 +2,8 @@
 
 namespace App\Domains\Marketing\Actions;
 
-use App\Models\LoyaltyProgram;
 use App\Domains\Marketing\Events\LoyaltyProgramCreated;
+use App\Models\LoyaltyProgram;
 
 class CreateLoyaltyProgram
 {

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ config('app.name', 'Ilthres Market') }} — @yield('title', 'Digital Business Presence Platform')</title>
+    <title>{{ config('app.name', 'OmniBusiness') }} — @yield('title', 'Discover Any Business. Grow Every Business.')</title>
     @fonts
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
@@ -35,7 +35,11 @@
     </header>
 
     <main>
-        @yield('content')
+        @isset($slot)
+            {!! $slot !!}
+        @else
+            @yield('content')
+        @endisset
     </main>
 
     <footer class="border-t border-gray-200 bg-gray-50">
@@ -46,7 +50,7 @@
                     <ul class="mt-4 space-y-3">
                         <li><a href="{{ route('explore') }}" class="text-sm text-gray-600 transition hover:text-dark-gold">Explore</a></li>
                         <li><a href="{{ route('register') }}" class="text-sm text-gray-600 transition hover:text-dark-gold">Pricing</a></li>
-                        <li><a href="#" class="text-sm text-gray-600 transition hover:text-dark-gold">Categories</a></li>
+                        <li><a href="{{ route('explore') }}" class="text-sm text-gray-600 transition hover:text-dark-gold">Categories</a></li>
                     </ul>
                 </div>
                 <div>
@@ -60,9 +64,8 @@
                 <div>
                     <h3 class="text-sm font-semibold text-dark-gold">Company</h3>
                     <ul class="mt-4 space-y-3">
-                        <li><a href="#" class="text-sm text-gray-600 transition hover:text-dark-gold">About</a></li>
-                        <li><a href="#" class="text-sm text-gray-600 transition hover:text-dark-gold">Privacy</a></li>
-                        <li><a href="#" class="text-sm text-gray-600 transition hover:text-dark-gold">Terms</a></li>
+                        <li><a href="{{ route('privacy') }}" class="text-sm text-gray-600 transition hover:text-dark-gold">Privacy</a></li>
+                        <li><a href="{{ route('terms') }}" class="text-sm text-gray-600 transition hover:text-dark-gold">Terms</a></li>
                     </ul>
                 </div>
                 <div>

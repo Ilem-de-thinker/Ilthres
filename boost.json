@@ -5,6 +5,7 @@
     "cloud": false,
     "skills": [
         "laravel-best-practices",
+        "scout-development",
         "livewire-development",
         "pest-testing",
         "tailwindcss-development"

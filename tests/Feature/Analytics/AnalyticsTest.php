@@ -7,6 +7,7 @@ use App\Domains\Analytics\Livewire\TopItems;
 use App\Domains\Analytics\Livewire\VisitorsChart;
 use App\Models\AnalyticsEvent;
 use App\Models\Business;
+use App\Models\Product;
 use App\Models\User;
 use Livewire\Livewire;
 
@@ -100,14 +101,14 @@ describe('Generate Report', function () {
 
     it('returns top items', function () {
         $report = app(GenerateReport::class);
-        $topItems = $report->topItems($this->business, \App\Models\AnalyticsEvent::TYPE_PRODUCT_VIEW);
+        $topItems = $report->topItems($this->business, AnalyticsEvent::TYPE_PRODUCT_VIEW);
 
         expect($topItems)->toBeArray();
     });
 
     it('returns today vs yesterday comparison', function () {
         $report = app(GenerateReport::class);
-        $todayVsYesterday = $report->todayVsYesterday($this->business, \App\Models\AnalyticsEvent::TYPE_PAGE_VIEW);
+        $todayVsYesterday = $report->todayVsYesterday($this->business, AnalyticsEvent::TYPE_PAGE_VIEW);
 
         expect($todayVsYesterday)->toHaveKeys(['today', 'yesterday']);
     });
@@ -144,7 +145,7 @@ describe('Top Items', function () {
     });
 
     it('shows product views', function () {
-        $product = \App\Models\Product::factory()->create([
+        $product = Product::factory()->create([
             'business_id' => $this->business->id,
             'is_active' => true,
             'name' => 'Popular Product',

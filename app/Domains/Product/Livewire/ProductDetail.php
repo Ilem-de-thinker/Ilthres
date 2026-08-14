@@ -3,16 +3,19 @@
 namespace App\Domains\Product\Livewire;
 
 use App\Domains\Product\Actions\DeleteProduct;
-use App\Domains\Product\Actions\ToggleStatus;
 use App\Models\Product;
 use Livewire\Component;
 
 class ProductDetail extends Component
 {
     public ?int $productId = null;
+
     public ?Product $product = null;
+
     public ?int $deleteId = null;
+
     public bool $showDeleteConfirm = false;
+
     public ?string $selectedImage = null;
 
     public function mount(int $productId): void
@@ -33,7 +36,7 @@ class ProductDetail extends Component
         $this->authorize('update', $this->product);
 
         $product = Product::findOrFail($this->productId);
-        $product->update(['is_active' => !$product->is_active]);
+        $product->update(['is_active' => ! $product->is_active]);
         $this->product = $product->fresh();
     }
 

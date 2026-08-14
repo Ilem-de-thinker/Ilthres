@@ -13,6 +13,7 @@ class CreateSubscription
         $subscription = Subscription::create([
             'business_id' => $data->businessId,
             'plan_id' => $data->planId,
+            'price_paid' => $data->pricePaid,
             'status' => $data->status,
             'gateway' => $data->gateway,
             'gateway_reference' => $data->gatewayReference,

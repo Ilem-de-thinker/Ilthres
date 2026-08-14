@@ -2,8 +2,8 @@
 
 namespace App\Domains\Marketing\Actions;
 
-use App\Models\Discount;
 use App\Domains\Marketing\Events\DiscountCreated;
+use App\Models\Discount;
 
 class CreateDiscount
 {

@@ -18,7 +18,7 @@ class ProductFactory extends Factory
         return [
             'business_id' => Business::factory(),
             'name' => ucfirst($name),
-            'slug' => Str::slug($name) . '-' . fake()->unique()->randomNumber(5),
+            'slug' => Str::slug($name).'-'.fake()->unique()->randomNumber(5),
             'description' => fake()->paragraph(),
             'price' => fake()->randomFloat(2, 100, 50000),
             'currency' => 'NGN',

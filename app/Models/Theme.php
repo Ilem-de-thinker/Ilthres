@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Carbon;
 
 /**
  * Represents a visual theme that can be applied to a business profile.
@@ -18,8 +19,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property array $config Theme configuration (colors, typography, radius, etc.)
  * @property bool $is_premium
  * @property bool $is_active
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  */
 class Theme extends Model
 {
@@ -69,7 +70,7 @@ class Theme extends Model
     {
         return $query->where(function ($q) use ($type) {
             $q->whereNull('business_type')
-              ->orWhere('business_type', $type);
+                ->orWhere('business_type', $type);
         });
     }
 }

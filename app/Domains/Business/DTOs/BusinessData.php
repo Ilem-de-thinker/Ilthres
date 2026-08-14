@@ -67,5 +67,8 @@ class BusinessData
 
         /** Whether the business appears in the Explore directory. */
         public readonly bool $isDiscoverable = false,
+
+        /** External website URL (for businesses not hosted on Ilthres). */
+        public readonly ?string $websiteUrl = null,
     ) {}
 }

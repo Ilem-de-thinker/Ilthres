@@ -1,24 +1,24 @@
 {
     "name": "Modern",
     "slug": "modern",
-    "description": "Sleek, contemporary theme with gradient accents and bold visuals.",
+    "description": "Lumina SaaS — technological elegance with glassmorphism, indigo gradients, and Plus Jakarta Sans. Futuristic SaaS aesthetic.",
     "thumbnail": null,
     "business_type": null,
     "is_premium": true,
     "sort_order": 1,
     "config": {
         "colors": {
-            "primary": "#8B5CF6",
-            "secondary": "#06B6D4",
-            "background": "#F9FAFB",
-            "text": "#1F2937",
-            "accent": "#F472B6"
+            "primary": "#4648d4",
+            "secondary": "#006591",
+            "background": "#f0f2ff",
+            "text": "#1a1a2e",
+            "accent": "#b90538"
         },
         "typography": {
             "heading": "Plus Jakarta Sans",
-            "body": "Inter"
+            "body": "Plus Jakarta Sans"
         },
-        "radius": "0.75rem",
+        "radius": "1rem",
         "animations": true
     }
 }

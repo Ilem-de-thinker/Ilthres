@@ -21,8 +21,8 @@ beforeEach(function () {
 });
 
 describe('Onboarding Wizard', function () {
-    it('redirects authenticated users without completed onboarding to wizard', function () {
-        $this->get('/dashboard')->assertRedirect('/onboarding');
+    it('redirects authenticated users at step 0 to get-started page', function () {
+        $this->get('/dashboard')->assertRedirect('/get-started');
     });
 
     it('renders onboarding page', function () {

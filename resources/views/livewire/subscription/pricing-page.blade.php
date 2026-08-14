@@ -10,6 +10,35 @@
         </div>
 
         @php
+            $pricingEnabled = \App\Models\PlatformSetting::get('pricing_enabled', true);
+        @endphp
+
+        @if (! $pricingEnabled)
+            <div class="mx-auto mt-8 max-w-2xl rounded-xl border border-green-200 bg-green-50 p-4">
+                <div class="flex items-center gap-3">
+                    <svg class="h-5 w-5 shrink-0 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <div>
+                        <p class="text-sm font-medium text-green-700">Pricing is temporarily disabled</p>
+                        <p class="text-xs text-green-600">All features are currently free for all businesses. No payment is required right now.</p>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        @if ($isLinkedBusiness)
+            <div class="mx-auto mt-8 max-w-2xl rounded-xl border border-blue-200 bg-blue-50 p-6">
+                <div class="flex items-center gap-3">
+                    <svg class="h-5 w-5 shrink-0 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <div>
+                        <p class="text-sm font-medium text-blue-700">Linked Business Plan</p>
+                        <p class="text-xs text-blue-600">Your linked business plan cannot be changed from here. Contact support to switch your plan type.</p>
+                    </div>
+                </div>
+                <a href="{{ route('dashboard') }}" class="mt-4 inline-block rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800">Go to dashboard</a>
+            </div>
+        @endif
+
+        @php
             $user = auth()->user();
             $currentPlanSlug = null;
             if ($user) {
@@ -49,7 +78,9 @@
                     </ul>
 
                     <div class="mt-8">
-                        @if (! $user)
+                        @if (! $pricingEnabled && $user)
+                            <a href="{{ route('dashboard') }}" class="block w-full rounded-lg bg-gray-900 px-6 py-3 text-center text-sm font-semibold text-white hover:bg-gray-800">Go to dashboard</a>
+                        @elseif (! $user)
                             <a href="{{ route('register') }}" class="block w-full rounded-lg border border-gray-300 bg-white px-6 py-3 text-center text-sm font-semibold text-gray-900 hover:bg-gray-50">Get started</a>
                         @elseif ($isCurrent)
                             <a href="{{ route('dashboard') }}" class="block w-full rounded-lg bg-gray-900 px-6 py-3 text-center text-sm font-semibold text-white">Go to dashboard</a>

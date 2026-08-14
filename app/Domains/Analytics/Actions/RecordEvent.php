@@ -4,7 +4,6 @@ namespace App\Domains\Analytics\Actions;
 
 use App\Models\AnalyticsEvent;
 use App\Models\Business;
-use Illuminate\Http\Request;
 
 class RecordEvent
 {

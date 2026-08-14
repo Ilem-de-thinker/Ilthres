@@ -9,6 +9,7 @@ use App\Domains\Product\DTOs\ProductData;
 use App\Models\Business;
 use App\Models\Media;
 use App\Models\Product;
+use App\Models\PromoBanner;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -18,25 +19,41 @@ class ProductForm extends Component
     use WithFileUploads;
 
     public ?int $businessId = null;
+
     public ?Business $business = null;
+
     public ?int $productId = null;
+
     public ?Product $product = null;
 
     public string $name = '';
+
     public ?string $description = null;
+
     public ?float $price = null;
+
     public ?float $comparePrice = null;
+
     public string $currency = 'NGN';
+
     public bool $isActive = true;
+
     public bool $isFeatured = false;
+
     public bool $isPublic = false;
+
     public int $sortOrder = 0;
 
     public array $images = [];
+
     public array $variants = [];
 
+    public array $selectedBanners = [];
+
     public bool $showMediaPicker = false;
+
     public array $pendingImages = [];
+
     public $mediaUpload = null;
 
     protected function rules(): array
@@ -96,8 +113,10 @@ class ProductForm extends Component
                 $group['options'] = collect($group['options'] ?? [])->map(function ($option) {
                     return is_string($option) ? ['value' => $option, 'image' => null] : $option;
                 })->values()->toArray();
+
                 return $group;
             })->values()->toArray();
+            $this->selectedBanners = $this->product->banners()->pluck('promo_banners.id')->toArray();
         }
     }
 
@@ -195,7 +214,7 @@ class ProductForm extends Component
             businessId: $this->business->id,
             categoryId: null,
             name: $this->name,
-            slug: Str::slug($this->name) . '-' . Str::random(4),
+            slug: Str::slug($this->name).'-'.Str::random(4),
             description: $this->description,
             price: (float) $this->price,
             comparePrice: $this->comparePrice ? (float) $this->comparePrice : null,
@@ -209,7 +228,11 @@ class ProductForm extends Component
         );
 
         $this->authorize('create', Product::class);
-        $action($data);
+        $product = $action($data);
+
+        if ($product && count($this->selectedBanners)) {
+            $product->banners()->sync($this->selectedBanners);
+        }
 
         $this->dispatch('product-saved');
     }
@@ -238,6 +261,8 @@ class ProductForm extends Component
         $this->authorize('update', $this->product);
         $action($this->product, $data);
 
+        $this->product->banners()->sync($this->selectedBanners);
+
         $this->dispatch('product-saved');
     }
 
@@ -255,8 +280,17 @@ class ProductForm extends Component
 
     public function render()
     {
+        $heroBanners = $this->business
+            ? PromoBanner::where('business_id', $this->business->id)
+                ->hero()
+                ->active()
+                ->ordered()
+                ->get()
+            : collect();
+
         return view('livewire.product.product-form', [
             'mediaItems' => $this->mediaItems,
+            'heroBanners' => $heroBanners,
         ]);
     }
 }

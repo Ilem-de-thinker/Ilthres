@@ -40,11 +40,11 @@
             <tbody class="divide-y divide-gray-200 bg-white">
                 @forelse ($transactions as $txn)
                     <tr class="hover:bg-gray-50">
-                        <td class="max-w-[160px] truncate px-4 py-3 text-sm font-medium text-gray-900" title="{{ $txn->reference }}">
+                        <td class="max-w-40 truncate px-4 py-3 text-sm font-medium text-gray-900" title="{{ $txn->reference }}">
                             {{ $txn->reference }}
                         </td>
                         <td class="px-4 py-3 text-sm text-gray-600">{{ $txn->business?->name ?? '—' }}</td>
-                        <td class="max-w-[200px] truncate px-4 py-3 text-sm text-gray-500" title="{{ $txn->description }}">
+                        <td class="max-w-50 truncate px-4 py-3 text-sm text-gray-500" title="{{ $txn->description }}">
                             {{ $txn->description ?: '—' }}
                         </td>
                         <td class="px-4 py-3 text-right text-sm font-semibold text-gray-900">

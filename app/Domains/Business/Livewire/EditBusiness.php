@@ -17,37 +17,57 @@ class EditBusiness extends Component
     use WithFileUploads;
 
     public ?int $selectedBusinessId = null;
+
     public ?Business $business = null;
 
     public string $name = '';
+
     public string $description = '';
+
     public string $about = '';
+
     public ?int $categoryId = null;
+
     public bool $isDiscoverable = false;
 
     public string $email = '';
+
     public string $phone = '';
+
     public string $whatsapp = '';
+
     public string $address = '';
+
     public string $city = '';
+
     public string $state = '';
+
     public string $country = 'Nigeria';
+
     public ?float $latitude = null;
+
     public ?float $longitude = null;
 
     public string $socialLinksJson = '[]';
 
     public $newLogo = null;
+
     public $newCover = null;
 
     public ?int $themeId = null;
+
     public string $themePrimary = '#4F46E5';
+
     public string $themeSecondary = '#10B981';
+
     public string $themeBackground = '#FFFFFF';
+
     public string $themeText = '#111827';
+
     public string $themeAccent = '#F59E0B';
 
     public ?string $successMessage = null;
+
     public ?string $errorMessage = null;
 
     public function mount(): void
@@ -226,7 +246,7 @@ class EditBusiness extends Component
 
             $this->successMessage = 'Business saved.';
         } catch (\Throwable $e) {
-            $this->errorMessage = 'Something went wrong. Please try again.';
+            $this->errorMessage = 'Something went wrong. Please try again 1.';
             report($e);
         }
     }

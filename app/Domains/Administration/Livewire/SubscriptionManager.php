@@ -13,6 +13,7 @@ class SubscriptionManager extends Component
     use WithPagination;
 
     public string $search = '';
+
     public string $filterStatus = '';
 
     public function render()
@@ -20,8 +21,7 @@ class SubscriptionManager extends Component
         $query = Subscription::with(['business', 'plan']);
 
         if ($this->search) {
-            $query->whereHas('business', fn ($b) =>
-                $b->where('name', 'like', "%{$this->search}%")
+            $query->whereHas('business', fn ($b) => $b->where('name', 'like', "%{$this->search}%")
             );
         }
 

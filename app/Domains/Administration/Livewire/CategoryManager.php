@@ -14,9 +14,16 @@ class CategoryManager extends Component
     use WithPagination;
 
     public string $name = '';
+
     public string $icon = '';
+
     public ?int $editingCategoryId = null;
+
     public bool $showForm = false;
+
+    public ?string $flashSuccess = null;
+
+    public ?string $flashError = null;
 
     protected function rules(): array
     {
@@ -24,6 +31,18 @@ class CategoryManager extends Component
             'name' => ['required', 'string', 'max:255'],
             'icon' => ['nullable', 'string', 'max:50'],
         ];
+    }
+
+    private function success(string $message): void
+    {
+        $this->flashSuccess = $message;
+        $this->flashError = null;
+    }
+
+    private function error(string $message): void
+    {
+        $this->flashError = $message;
+        $this->flashSuccess = null;
     }
 
     public function create(): void
@@ -38,7 +57,7 @@ class CategoryManager extends Component
         ]);
 
         $this->reset(['name', 'icon', 'showForm']);
-        session()->flash('success', 'Category created successfully.');
+        $this->success('Category created successfully.');
     }
 
     public function edit(Category $category): void
@@ -61,7 +80,7 @@ class CategoryManager extends Component
         ]);
 
         $this->reset(['name', 'icon', 'editingCategoryId', 'showForm']);
-        session()->flash('success', 'Category updated successfully.');
+        $this->success('Category updated successfully.');
     }
 
     public function toggleActive(int $categoryId): void
@@ -69,7 +88,7 @@ class CategoryManager extends Component
         $category = Category::findOrFail($categoryId);
         $category->update(['is_active' => ! $category->is_active]);
 
-        session()->flash('success', "Category \"{$category->name}\" has been " . ($category->is_active ? 'enabled' : 'disabled') . ".");
+        $this->success("Category \"{$category->name}\" has been ".($category->is_active ? 'enabled' : 'disabled').'.');
     }
 
     public function delete(int $categoryId): void
@@ -77,12 +96,13 @@ class CategoryManager extends Component
         $category = Category::findOrFail($categoryId);
 
         if ($category->businesses()->exists() || $category->products()->exists() || $category->services()->exists()) {
-            session()->flash('error', "Cannot delete \"{$category->name}\" — it has businesses, products, or services attached.");
+            $this->error("Cannot delete \"{$category->name}\" — it has businesses, products, or services attached.");
+
             return;
         }
 
         $category->delete();
-        session()->flash('success', "Category \"{$category->name}\" deleted.");
+        $this->success("Category \"{$category->name}\" deleted.");
     }
 
     public function cancel(): void

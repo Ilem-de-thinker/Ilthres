@@ -15,8 +15,11 @@ use Livewire\Component;
 class ResetPassword extends Component
 {
     public string $token;
+
     public string $email = '';
+
     public string $password = '';
+
     public string $passwordConfirmation = '';
 
     public function mount(string $token): void

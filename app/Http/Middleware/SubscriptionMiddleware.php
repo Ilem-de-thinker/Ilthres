@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\Business;
+use App\Models\PlatformSetting;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -18,6 +19,9 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
  *
  * Resolves the current business from the session. If no active subscription
  * is found, or if the plan's limit is exceeded, a 403 is returned.
+ *
+ * When platform pricing is disabled (pricing_enabled = false), all checks
+ * are bypassed and all features are allowed.
  */
 class SubscriptionMiddleware
 {
@@ -30,6 +34,8 @@ class SubscriptionMiddleware
      */
     public function handle(Request $request, Closure $next, string $feature, ?string $operator = null, ?string $value = null): mixed
     {
+        $pricingEnabled = (bool) PlatformSetting::get('pricing_enabled', true);
+
         $businessId = session('current_business_id');
 
         // Fall back to the user's first business if no session value set.
@@ -48,15 +54,25 @@ class SubscriptionMiddleware
             throw new HttpException(403, 'Business not found.');
         }
 
-        // Check for an active subscription or trial.
-        // If no subscription record exists, treat as Free plan.
         $subscription = $business->subscription;
 
-        if ($subscription && ! $subscription->isActive()) {
-            throw new HttpException(403, 'Your subscription is no longer active.');
+        // When pricing is disabled, use professional plan for free.
+        // Active subscribers keep their current plan; expired/no-subscription get professional.
+        if (! $pricingEnabled) {
+            if ($subscription && $subscription->isActive()) {
+                $planSlug = $subscription->plan?->slug ?? 'professional';
+            } else {
+                $planSlug = 'professional';
+            }
+        } else {
+            // When pricing is enabled, enforce active subscription.
+            if ($subscription && ! $subscription->isActive()) {
+                throw new HttpException(403, 'Your subscription is no longer active.');
+            }
+
+            $planSlug = $subscription?->plan?->slug ?? 'free';
         }
 
-        $planSlug = $subscription?->plan?->slug ?? 'free';
         $limits = config("plans.{$planSlug}");
 
         if ($limits === null) {
@@ -75,10 +91,10 @@ class SubscriptionMiddleware
             $operator = $operator ?? '>=';
             $allowed = match ($operator) {
                 '>=' => $limit >= (int) $value,
-                '>'  => $limit > (int) $value,
+                '>' => $limit > (int) $value,
                 '==' => $limit == $value,
                 '<=' => $limit <= (int) $value,
-                '<'  => $limit < (int) $value,
+                '<' => $limit < (int) $value,
                 default => (bool) $limit,
             };
 

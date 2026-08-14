@@ -5,34 +5,51 @@ namespace App\Domains\Theme\Livewire;
 use App\Domains\Theme\Actions\ActivateTheme;
 use App\Domains\Theme\Actions\CustomizeTheme;
 use App\Models\Business;
+use App\Models\Theme;
 use Livewire\Component;
 
-/**
- * Color, font, and radius controls for customising a business's active theme.
- *
- * Renders a form with colour pickers, font selectors, and radius slider.
- * Changes are saved per-business and immediately reflected in the preview.
- * Calls ActivateTheme if no theme is active, then CustomizeTheme to save overrides.
- */
 class ThemeCustomizer extends Component
 {
     public Business $business;
 
     public ?int $selectedThemeId = null;
+
     public string $primary = '#3B82F6';
+
     public string $secondary = '#10B981';
+
     public string $background = '#FFFFFF';
+
     public string $text = '#111827';
+
     public string $accent = '#F59E0B';
+
     public string $headingFont = 'Inter';
+
     public string $bodyFont = 'Inter';
+
     public string $radius = '0.5rem';
-    public bool $animations = true;
+
+    public string $animations = '1';
 
     public ?string $successMessage = null;
+
     public ?string $errorMessage = null;
 
-    /** Load the current active theme customisation into the form fields. */
+    public array $availableFonts = [
+        'Playfair Display',
+        'Plus Jakarta Sans',
+        'Inter',
+        'Hanken Grotesk',
+        'Anton',
+        'Archivo Narrow',
+        'Space Mono',
+        'Work Sans',
+        'Be Vietnam Pro',
+        'Source Serif 4',
+        'JetBrains Mono',
+    ];
+
     public function mount(): void
     {
         $activeTheme = $this->business->themes()
@@ -50,19 +67,18 @@ class ThemeCustomizer extends Component
             $this->headingFont = $customization['typography']['heading'] ?? 'Inter';
             $this->bodyFont = $customization['typography']['body'] ?? 'Inter';
             $this->radius = $customization['radius'] ?? '0.5rem';
-            $this->animations = $customization['animations'] ?? true;
+            $this->animations = ($customization['animations'] ?? true) ? '1' : '0';
         }
     }
 
-    /** Select a theme and activate it. */
     public function selectTheme(int $themeId, ActivateTheme $activateTheme): void
     {
-        $theme = \App\Models\Theme::findOrFail($themeId);
+        $theme = Theme::findOrFail($themeId);
         $this->selectedThemeId = $themeId;
 
         $activateTheme($this->business, $theme);
 
-        $defaults = $theme->config;
+        $defaults = $theme->config ?? [];
         $this->primary = $defaults['colors']['primary'] ?? '#3B82F6';
         $this->secondary = $defaults['colors']['secondary'] ?? '#10B981';
         $this->background = $defaults['colors']['background'] ?? '#FFFFFF';
@@ -71,16 +87,16 @@ class ThemeCustomizer extends Component
         $this->headingFont = $defaults['typography']['heading'] ?? 'Inter';
         $this->bodyFont = $defaults['typography']['body'] ?? 'Inter';
         $this->radius = $defaults['radius'] ?? '0.5rem';
-        $this->animations = $defaults['animations'] ?? true;
+        $this->animations = ($defaults['animations'] ?? true) ? '1' : '0';
 
         $this->saveCustomization(app(CustomizeTheme::class));
     }
 
-    /** Save the current customisation for the active theme. */
     public function saveCustomization(CustomizeTheme $customizeTheme): void
     {
         if (! $this->selectedThemeId) {
             $this->errorMessage = 'Select a theme first.';
+
             return;
         }
 
@@ -97,7 +113,7 @@ class ThemeCustomizer extends Component
                 'body' => $this->bodyFont,
             ],
             'radius' => $this->radius,
-            'animations' => $this->animations,
+            'animations' => $this->animations === '1',
         ]);
 
         $this->successMessage = 'Theme saved.';
@@ -106,7 +122,7 @@ class ThemeCustomizer extends Component
     public function render()
     {
         return view('livewire.theme.theme-customizer', [
-            'themes' => \App\Models\Theme::where('is_active', true)
+            'themes' => Theme::where('is_active', true)
                 ->forBusinessType($this->business->type)
                 ->orderBy('sort_order')
                 ->get(),

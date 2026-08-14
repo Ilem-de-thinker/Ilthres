@@ -2,7 +2,7 @@
 
 > **Principle:** Features are implemented one at a time, in dependency order. Each feature is fully completed (including tests) before the next begins.
 >
-> **Last updated:** 2026-07-06 — Features 1-14 (Authentication through Notifications) completed.
+> **Last updated:** 2026-07-14 — Features 1-17 (Authentication through Business Detail Page) completed.
 
 ---
 
@@ -66,6 +66,9 @@ We **never** create files for multiple features at once. Each feature is complet
 | 12 | Payments | ✅ Actions (RecordPayment), DTOs (TransactionData), Events (Received, Failed), Policy | ✅ BillingHistory | ✅ billing page + sidebar | ✅ web.php | ❌ | ✅ Completed |
 | 13 | Marketing | ✅ Actions (CreateLink, DeleteLink, TrackClick), DTOs, Events (Created, Deleted, Clicked), Policy | ✅ MarketingLinks, CreateLink, LinkStats | ✅ marketing-links, create-link, link-stats, marketing pages | ✅ web.php | ❌ | ✅ Completed |
 | 14 | Notifications | ✅ Actions (MarkAsRead, MarkAllAsRead, UpdatePreferences), Events (NotificationRead, NotificationSent), Laravel Notifications (ReviewReceived, SubscriptionExpiring, VerificationApproved) | ✅ NotificationBell, NotificationList, NotificationPreferences | ✅ notification-bell, notification-list, notification-preferences, notifications page, notification-preferences page, dashboard integration | ✅ web.php | ❌ | ✅ Completed |
+| 15 | Business Locations | ✅ CreateLocation, UpdateLocation, DeleteLocation, SetPrimaryLocation, LocationData, LocationCreated, LocationUpdated, LocationDeleted, LocationPolicy | ✅ LocationManager | ✅ location-manager, locations page | ✅ /dashboard/locations | ❌ | ✅ Completed |
+| 16 | KYC Verification | ✅ SubmitVerification, ApproveVerification, RejectVerification, VerificationSubmitted, VerificationApproved, VerificationRejected, BusinessVerification model | ✅ KycSettings, VerificationManager (admin) | ✅ kyc-settings, verification-manager, verification pages | ✅ /dashboard/kyc, /admin/verifications | ❌ | ✅ Completed |
+| 17 | Business Detail Page | ✅ BusinessDetail component, website_url migration | ✅ BusinessDetail | ✅ business-detail | ✅ web.php (business.profile → BusinessDetail, business.site → PublicProfile) | ❌ | ✅ Completed |
 
 ### Infrastructure
 | Item | Status |
@@ -83,6 +86,8 @@ We **never** create files for multiple features at once. Each feature is complet
 | Theme engine (CSS variable injection, ActivateTheme, CustomizeTheme) | ✅ |
 | Theme scoping by business type (product_store vs service_business) | ✅ |
 | Paystack payment integration (onboarding) | ✅ |
+| Business locations (multi-branch support) | ✅ |
+| KYC verification (admin review workflow) | ✅ |
 
 ---
 
@@ -105,6 +110,9 @@ Features are built in dependency order. A feature's dependencies must be complet
 12. Payments / Invoicing ─────────────────────── (needs Business)
 13. Marketing Links & QR Codes ───────────────── (needs Business, Analytics)
 14. Notifications ────────────────────────────── (needs Auth)
+15. Business Locations ───────────────────────── (needs Business)
+16. KYC Verification ────────────────────────── (needs Business)
+17. Business Detail Page ─────────────────────── (needs Business, Explore, Locations, KYC)
 ```
 
 ---

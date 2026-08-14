@@ -2,8 +2,8 @@
 
 namespace App\Domains\Marketing\Actions;
 
-use App\Models\Referral;
 use App\Domains\Marketing\Events\ReferralCreated;
+use App\Models\Referral;
 
 class CreateReferralCode
 {

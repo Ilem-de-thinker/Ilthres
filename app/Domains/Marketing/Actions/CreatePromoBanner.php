@@ -2,8 +2,8 @@
 
 namespace App\Domains\Marketing\Actions;
 
-use App\Models\PromoBanner;
 use App\Domains\Marketing\Events\PromoBannerCreated;
+use App\Models\PromoBanner;
 
 class CreatePromoBanner
 {

@@ -5,8 +5,9 @@ namespace App\Domains\Marketing\Livewire;
 use App\Domains\Marketing\Actions\DeleteLink;
 use App\Models\Business;
 use App\Models\MarketingLink;
+use Livewire\Component;
 
-class MarketingLinks extends \Livewire\Component
+class MarketingLinks extends Component
 {
     public ?Business $business = null;
 

@@ -6,14 +6,18 @@ use App\Domains\Marketing\Actions\CreateLink as CreateLinkAction;
 use App\Domains\Marketing\DTOs\MarketingLinkData;
 use App\Models\Business;
 use Illuminate\Support\Str;
+use Livewire\Component;
 
-class CreateLink extends \Livewire\Component
+class CreateLink extends Component
 {
     public ?Business $business = null;
 
     public string $name = '';
+
     public string $slug = '';
+
     public string $url = '';
+
     public ?string $description = null;
 
     public function mount(): void

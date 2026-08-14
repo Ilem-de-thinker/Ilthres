@@ -9,9 +9,13 @@ use Livewire\Component;
 class ServiceDetail extends Component
 {
     public ?int $serviceId = null;
+
     public ?Service $service = null;
+
     public ?int $deleteId = null;
+
     public bool $showDeleteConfirm = false;
+
     public ?string $selectedImage = null;
 
     public function mount(int $serviceId): void
@@ -32,7 +36,7 @@ class ServiceDetail extends Component
         $this->authorize('update', $this->service);
 
         $service = Service::findOrFail($this->serviceId);
-        $service->update(['is_active' => !$service->is_active]);
+        $service->update(['is_active' => ! $service->is_active]);
         $this->service = $service->fresh();
     }
 

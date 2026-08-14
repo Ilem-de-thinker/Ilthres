@@ -2,9 +2,9 @@
 
 namespace App\Domains\Marketing\Actions;
 
+use App\Domains\Marketing\Events\LeadFormSubmitted;
 use App\Models\LeadForm;
 use App\Models\LeadSubmission;
-use App\Domains\Marketing\Events\LeadFormSubmitted;
 
 class SubmitLeadForm
 {
